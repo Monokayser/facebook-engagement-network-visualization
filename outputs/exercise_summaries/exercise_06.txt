@@ -1,0 +1,2 @@
+Exercise 6 - Interactive Plotly dashboard
+Dropdown modes: Interest Group and In-Degree. Node positions and edges remain fixed; hover text shows node ID, group, in-degree, and out-degree.

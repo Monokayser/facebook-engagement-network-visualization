@@ -1,0 +1,2 @@
+Exercise 5 - Generative models
+Watts-Strogatz captures clustering and short paths; Barabasi-Albert captures hubs and heterogeneous degree. A social network can require both properties, so no model is universally best.

@@ -1,0 +1,5 @@
+Exercise 3 - Synthetic student-course bipartite graph
+Bipartite: True
+Most popular course: Data Visualization (12)
+Most enrolled student: Imran Kabir (5)
+Data Visualization bridges every represented major. Data Science students also concentrate in Machine Learning and Social Network Analysis, while Multimedia Technology students favor Human-Computer Interaction.

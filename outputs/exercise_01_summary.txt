@@ -1,0 +1,12 @@
+Exercise 1 - Weighted adjacency representations
+Adjacency list:
+Dhaka: Chattogram, Sylhet, Khulna, Rajshahi, Barishal, Rangpur
+Chattogram: Dhaka, Sylhet
+Sylhet: Dhaka, Chattogram
+Khulna: Dhaka, Barishal
+Rajshahi: Dhaka, Rangpur
+Barishal: Dhaka, Khulna
+Rangpur: Dhaka, Rajshahi
+
+Symmetric: True
+Each undirected weighted edge contributes the same weight to cells (u, v) and (v, u), so the matrix equals its transpose. A directed graph or asymmetric directional weights would break this symmetry.

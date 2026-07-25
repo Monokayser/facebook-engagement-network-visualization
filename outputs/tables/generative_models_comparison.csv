@@ -1,0 +1,4 @@
+Model,Nodes,Edges,Density,Average Degree,Average Clustering,Connected,Connected Components,Average Shortest Path,Path Length Scope,Maximum Degree,Degree Standard Deviation,Social-Network Similarity Notes
+"Erdos-Renyi G(n,p)",30,33,0.07586206896551724,2.2,0.07222222222222222,False,3,3.828042328042328,largest connected component,4,1.1661903789690602,Homogeneous random mixing; limited clustering and no preferential hubs.
+Watts-Strogatz small-world,30,60,0.13793103448275862,4.0,0.34555555555555556,True,1,2.9839080459770115,whole graph,5,0.6324555320336759,"High local clustering and short paths, but comparatively narrow degrees."
+Barabasi-Albert scale-free,30,56,0.12873563218390804,3.7333333333333334,0.3001960784313725,True,1,2.1816091954022987,whole graph,18,3.5207322470695717,"Strong hubs and heterogeneous degrees, but weaker local clustering here."

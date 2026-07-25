@@ -1,0 +1,16 @@
+node_id,label,node_type
+AI,Artificial Intelligence,Research area
+CV,Computer Vision,Research area
+NLP,Natural Language Processing,Research area
+RS,Recommendation Systems,Research area
+HCI,Human-Computer Interaction,Research area
+DL,Deep Learning,Method
+GNN,Graph Neural Networks,Method
+CF,Collaborative Filtering,Method
+Python,Python,Tool
+PyTorch,PyTorch,Tool
+NetworkX,NetworkX,Tool
+EduTech,Educational Technology,Application
+SmartMedia,Smart Multimedia,Application
+Engage,Engagement Prediction,Outcome
+Personalize,Personalized Content,Outcome

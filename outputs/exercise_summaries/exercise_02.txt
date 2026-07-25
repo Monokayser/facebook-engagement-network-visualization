@@ -1,0 +1,4 @@
+Exercise 2 - Layout comparison
+Best layout: Kamada-Kawai
+Measured average clustering: 0.000
+For this exact 15-node realization, Kamada-Kawai minimizes pairwise distance stress and makes the ring-like locality plus rewired shortcuts most legible; spring is a close alternative. The measured average clustering is 0.0, so no layout can reveal triangle-based clustering that is absent from the supplied k=3 realization.

@@ -1,0 +1,19 @@
+node_id,label,node_type,degree,major_or_department
+C01,Data Visualization,course,12,Computer Science
+C03,Machine Learning,course,7,Artificial Intelligence
+C02,Social Network Analysis,course,6,Computer Science
+C04,Database Systems,course,5,Computer Science
+C05,Human-Computer Interaction,course,5,Multimedia
+C06,Research Methodology,course,5,General Studies
+S09,Imran Kabir,student,5,Computer Science
+S01,Ayesha Rahman,student,4,Computer Science
+S05,Farzana Islam,student,4,Data Science
+S12,Raisa Noor,student,4,Data Science
+S02,Tanvir Ahmed,student,3,Computer Science
+S03,Nusrat Jahan,student,3,Software Engineering
+S04,Sakib Hasan,student,3,Software Engineering
+S06,Rafiul Karim,student,3,Data Science
+S07,Mehedi Hossain,student,3,Information Systems
+S08,Sadia Akter,student,3,Information Systems
+S11,Arif Mahmud,student,3,Multimedia Technology
+S10,Maliha Chowdhury,student,2,Multimedia Technology

@@ -1,0 +1,24 @@
+[tool.black]
+line-length = 88
+target-version = ["py312"]
+extend-exclude = "(_source_materials|public|visualizations|website)"
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+exclude = [
+  "_source_materials",
+  "notebooks",
+  "public",
+  "visualizations",
+  "website",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+python_files = ["test_*.py"]

@@ -1,0 +1,3 @@
+Exercise 4 - Weighted Barabasi-Albert graph
+Edges: 196; range: 1-10; mean: 5.388
+Edge width changes which ties appear salient, but seeded random weights are an encoding demonstration. Node centrality and edge weight are related only when the selected centrality definition explicitly uses weights.
