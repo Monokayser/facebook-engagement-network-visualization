@@ -288,8 +288,8 @@ export default function Home() {
             <h2>Applied AI, methods, tools, and outcomes.</h2>
           </div>
           <p>
-            Recommendation Systems has the highest weighted betweenness
-            (0.3663), bridging research areas with methods and application
+            Recommendation Systems has the highest inverse-strength weighted
+            betweenness (0.5385), bridging research areas with methods and application
             outcomes. This is an illustrative graph, not empirical evidence.
           </p>
         </div>

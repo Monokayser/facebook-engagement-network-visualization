@@ -282,6 +282,69 @@
         "Barishal",
         "Rangpur"
       ],
+      "nodes": 7,
+      "edges": 9,
+      "density": 0.42857142857142855,
+      "weighted_edges": [
+        {
+          "source": "Dhaka",
+          "target": "Chattogram",
+          "distance_km": 264
+        },
+        {
+          "source": "Dhaka",
+          "target": "Sylhet",
+          "distance_km": 247
+        },
+        {
+          "source": "Dhaka",
+          "target": "Khulna",
+          "distance_km": 209
+        },
+        {
+          "source": "Dhaka",
+          "target": "Rajshahi",
+          "distance_km": 256
+        },
+        {
+          "source": "Dhaka",
+          "target": "Barishal",
+          "distance_km": 170
+        },
+        {
+          "source": "Dhaka",
+          "target": "Rangpur",
+          "distance_km": 300
+        },
+        {
+          "source": "Chattogram",
+          "target": "Sylhet",
+          "distance_km": 350
+        },
+        {
+          "source": "Khulna",
+          "target": "Barishal",
+          "distance_km": 130
+        },
+        {
+          "source": "Rajshahi",
+          "target": "Rangpur",
+          "distance_km": 130
+        }
+      ],
+      "total_recorded_distance_km": 2056,
+      "longest_route": {
+        "source": "Chattogram",
+        "target": "Sylhet",
+        "distance_km": 350
+      },
+      "shortest_route": {
+        "source": "Khulna",
+        "target": "Barishal",
+        "distance_km": 130
+      },
+      "highest_degree_city": "Dhaka",
+      "highest_degree": 6,
       "reason": "Each undirected weighted edge contributes the same weight to cells (u, v) and (v, u), so the matrix equals its transpose. A directed graph or asymmetric directional weights would break this symmetry."
     },
     "exercise_2": {
@@ -289,6 +352,12 @@
       "justification": "For this exact 15-node realization, Kamada-Kawai minimizes pairwise distance stress and makes the ring-like locality plus rewired shortcuts most legible; spring is a close alternative. The measured average clustering is 0.0, so no layout can reveal triangle-based clustering that is absent from the supplied k=3 realization.",
       "nodes": 15,
       "edges": 15,
+      "density": 0.14285714285714285,
+      "connected": true,
+      "average_degree": 2.0,
+      "diameter": 8,
+      "minimum_degree": 1,
+      "maximum_degree": 4,
       "average_clustering": 0.0
     },
     "exercise_3": {
@@ -300,6 +369,35 @@
       "most_popular_course_enrollments": 12,
       "most_enrolled_student": "Imran Kabir",
       "most_enrolled_student_courses": 5,
+      "bipartite_density": 0.5555555555555556,
+      "mean_courses_per_student": 3.3333333333333335,
+      "mean_students_per_course": 6.666666666666667,
+      "course_degrees": [
+        {
+          "course": "Data Visualization",
+          "enrollments": 12
+        },
+        {
+          "course": "Machine Learning",
+          "enrollments": 7
+        },
+        {
+          "course": "Social Network Analysis",
+          "enrollments": 6
+        },
+        {
+          "course": "Database Systems",
+          "enrollments": 5
+        },
+        {
+          "course": "Human-Computer Interaction",
+          "enrollments": 5
+        },
+        {
+          "course": "Research Methodology",
+          "enrollments": 5
+        }
+      ],
       "pattern": "Data Visualization bridges every represented major. Data Science students also concentrate in Machine Learning and Social Network Analysis, while Multimedia Technology students favor Human-Computer Interaction."
     },
     "exercise_4": {
@@ -308,6 +406,23 @@
       "minimum_weight": 1,
       "maximum_weight": 10,
       "mean_weight": 5.387755102040816,
+      "median_weight": 5.0,
+      "weight_standard_deviation": 2.852255294772122,
+      "total_edge_weight": 1056,
+      "average_degree": 3.92,
+      "maximum_degree": 36,
+      "weight_frequencies": {
+        "1": 16,
+        "2": 26,
+        "3": 18,
+        "4": 25,
+        "5": 20,
+        "6": 18,
+        "7": 17,
+        "8": 14,
+        "9": 25,
+        "10": 17
+      },
       "interpretation": "Edge width changes which ties appear salient, but seeded random weights are an encoding demonstration. Node centrality and edge weight are related only when the selected centrality definition explicitly uses weights."
     },
     "exercise_5": {
@@ -368,15 +483,91 @@
         "In-Degree"
       ],
       "standalone_html": "visualizations/interactive/network_color_toggle_dashboard.html",
-      "positions_preserved": true
+      "positions_preserved": true,
+      "directed": true,
+      "density": 0.1368421052631579,
+      "mean_in_degree": 2.6,
+      "minimum_in_degree": 1,
+      "maximum_in_degree": 5,
+      "minimum_out_degree": 1,
+      "maximum_out_degree": 5,
+      "interest_group_counts": {
+        "Music": 2,
+        "Sports": 8,
+        "Tech": 7,
+        "Travel": 3
+      },
+      "highest_in_degree_users": [
+        {
+          "user": "user_11",
+          "in_degree": 5
+        },
+        {
+          "user": "user_12",
+          "in_degree": 4
+        },
+        {
+          "user": "user_13",
+          "in_degree": 4
+        }
+      ]
     },
     "exercise_7": {
       "nodes": 15,
       "edges": 21,
       "density": 0.2,
       "top_betweenness_node": "Recommendation Systems",
-      "top_betweenness_value": 0.3663003663003663,
-      "interpretation": "Recommendation Systems is the strongest bridge by betweenness, linking research themes, technical methods, and application outcomes. The graph is synthetic and demonstrates structural interpretation, not empirical evidence about a real research community.",
+      "top_betweenness_value": 0.5384615384615385,
+      "connected": true,
+      "average_degree": 2.8,
+      "top_centrality_records": [
+        {
+          "label": "Recommendation Systems",
+          "node_type": "Research area",
+          "degree": 5,
+          "degree_centrality": 0.3571428571428571,
+          "betweenness_centrality": 0.5384615384615385,
+          "closeness_centrality": 0.56,
+          "pagerank": 0.12971890809868664
+        },
+        {
+          "label": "Artificial Intelligence",
+          "node_type": "Research area",
+          "degree": 3,
+          "degree_centrality": 0.21428571428571427,
+          "betweenness_centrality": 0.2509157509157509,
+          "closeness_centrality": 0.4666666666666667,
+          "pagerank": 0.07897051969569385
+        },
+        {
+          "label": "Deep Learning",
+          "node_type": "Method",
+          "degree": 4,
+          "degree_centrality": 0.2857142857142857,
+          "betweenness_centrality": 0.19230769230769232,
+          "closeness_centrality": 0.4666666666666667,
+          "pagerank": 0.1010876032563883
+        },
+        {
+          "label": "Computer Vision",
+          "node_type": "Research area",
+          "degree": 3,
+          "degree_centrality": 0.21428571428571427,
+          "betweenness_centrality": 0.16666666666666669,
+          "closeness_centrality": 0.4375,
+          "pagerank": 0.07949162751418684
+        },
+        {
+          "label": "Graph Neural Networks",
+          "node_type": "Method",
+          "degree": 3,
+          "degree_centrality": 0.21428571428571427,
+          "betweenness_centrality": 0.1611721611721612,
+          "closeness_centrality": 0.5,
+          "pagerank": 0.06300452219841791
+        }
+      ],
+      "interpretation": "Recommendation Systems is the strongest bridge by inverse-strength weighted betweenness, linking research themes, technical methods, and application outcomes. The graph is synthetic and demonstrates structural interpretation, not empirical evidence about a real research community.",
       "standalone_html": "visualizations/interactive/domain_graph.html"
     }
   },

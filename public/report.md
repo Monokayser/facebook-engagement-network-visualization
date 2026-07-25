@@ -10,7 +10,7 @@
 
 ## Abstract
 
-This project analyzes 7,050 anonymized Facebook posts from ten Thai fashion and cosmetics sellers and extends the supplied graph-visualization teaching material through seven reproducible exercises. The analysis combines data cleaning, feature engineering, exploratory visualization, graph representations, layout comparison, bipartite modeling, weighted encoding, generative-model statistics, and interactive Plotly networks. The dataset records 1,622,326 reactions, 1,581,710 comments, and 282,159 shares. Video posts have the largest mean total engagement (1,041.57), although the observational design does not support a causal claim. The weighted `G_transport` adjacency matrix is symmetric, while the model comparison shows a trade-off: Watts-Strogatz captures clustering and short paths, whereas Barabasi-Albert captures hubs and degree heterogeneity. The result is a reproducible academic artifact with static figures, interactive HTML, executable notebooks, a responsive website, automated tests, and machine-readable analytical outputs.
+An analysis is presented of 7,050 anonymized Facebook posts from ten Thai fashion and cosmetics sellers, and the supplied graph-visualization teaching material is extended through seven reproducible exercises. Data cleaning, feature engineering, exploratory visualization, graph representations, layout comparison, bipartite modeling, weighted encoding, generative-model statistics, and interactive Plotly networks are combined. A total of 1,622,326 reactions, 1,581,710 comments, and 282,159 shares is recorded. The largest mean total engagement is observed for video posts (1,041.57), although a causal claim is not supported by the observational design. Symmetry is verified in the weighted `G_transport` adjacency matrix, while a trade-off is revealed by the model comparison: clustering and short paths are captured by Watts-Strogatz, whereas hubs and degree heterogeneity are captured by Barabasi-Albert. A reproducible academic artifact is produced with static figures, interactive HTML, executable notebooks, a responsive website, automated tests, and machine-readable analytical outputs.
 
 **Keywords:** Facebook engagement, data visualization, social-network analysis, NetworkX, Plotly, graph layout, Python
 
@@ -68,7 +68,7 @@ No engagement-rate feature is claimed because reach or impressions are absent.
 
 ## 6. Exploratory data analysis
 
-The dataset contains 4,288 photos, 2,334 videos, 365 status posts, and 63 links. Total engagement is 3,486,195; its mean is 494.50 and median is 69.00, demonstrating right skew. The hour with the largest observed median engagement is 18:00 (377.00), but this association may reflect content mix, seller behavior, seasonality, or other unobserved factors.
+The dataset is composed of 4,288 photos, 2,334 videos, 365 status posts, and 63 links. Total engagement of 3,486,195 is recorded; a mean of 494.50 and a median of 69.00 are obtained, indicating right skew. The largest observed median engagement is associated with 18:00 (377.00), but the association may be affected by content mix, seller behavior, seasonality, or other unobserved factors.
 
 **Table 1. Engagement summary by post type**
 
@@ -99,93 +99,274 @@ An adjacency matrix offers exact pairwise lookup, while a node-link diagram emph
 
 ### 8.1 Exercise 1: Weighted adjacency representations
 
-**Objective.** Reuse Section 8.2's seven-city `G_transport` graph and verify its weighted matrix.
+#### 8.1.1 Objective and analytical question
 
-**Method and implementation.** `nx.to_pandas_adjacency(..., weight="weight")` generated a labeled matrix, and `numpy.allclose(A, A.T)` tested symmetry.
+The relationship between an adjacency list and a weighted adjacency matrix was examined through the supplied `G_transport` network. Particular attention was given to whether the matrix was symmetric and to what that symmetry implied about the direction of the modeled routes.
 
-**Result.** The matrix is symmetric: **True**. Dhaka has six incident routes and therefore occupies the main hub row and column. The matrix stores kilometer values, not binary indicators.
+#### 8.1.2 Graph construction and stored attributes
 
-**Interpretation.** An undirected edge contributes the same weight to `(u,v)` and `(v,u)`. The matrix would not need to be symmetric for a directed graph or when directional weights differ.
+Seven Bangladeshi cities were represented by nodes, and nine teaching routes were represented by undirected edges. A distance in kilometers was stored in the `weight` attribute of every edge. The graph contains 7 nodes, 9 edges, and a density of 0.4286. Dhaka was connected to 6 other cities and therefore received the largest degree.
 
-**Limitation.** The transportation graph is a teaching example rather than a complete national route network.
+#### 8.1.3 Analytical procedure
 
-### 8.2 Exercise 2: Network layout comparison
+A labeled adjacency list was produced from NetworkX neighbor iterators. A weighted matrix was generated with `nx.to_pandas_adjacency`, using the documented node order and edge `weight` attribute. Symmetry was tested by comparing the matrix with its transpose through `numpy.allclose`. A zero off the diagonal was interpreted as the absence of a recorded direct route.
 
-**Objective.** Draw `G_ppi` with spring, circular, shell, spectral, Kamada-Kawai, and random layouts while holding visual encoding constant.
+#### 8.1.4 Verified results
 
-**Result and interpretation.** The **Kamada-Kawai layout** is selected as the clearest view for this small graph. It minimizes graph-theoretic distance stress across all node pairs and makes the ring-like locality plus rewired shortcuts more legible than circular, shell, spectral, or random placement. Spring is a close alternative. Crucially, the supplied `k=3` realization has a measured average clustering coefficient of 0.000. No layout can reveal triangle-based clustering that is absent; the selected layout therefore clarifies distance structure and shortcuts, not empirical communities. The conclusion is layout-specific rather than a claim that one algorithm is universally superior.
+**Table 2. Weighted adjacency matrix for `G_transport` (kilometers)**
+
+| City | Dhaka | Chattogram | Sylhet | Khulna | Rajshahi | Barishal | Rangpur |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Dhaka | 0 | 264 | 247 | 209 | 256 | 170 | 300 |
+| Chattogram | 264 | 0 | 350 | 0 | 0 | 0 | 0 |
+| Sylhet | 247 | 350 | 0 | 0 | 0 | 0 | 0 |
+| Khulna | 209 | 0 | 0 | 0 | 0 | 130 | 0 |
+| Rajshahi | 256 | 0 | 0 | 0 | 0 | 0 | 130 |
+| Barishal | 170 | 0 | 0 | 130 | 0 | 0 | 0 |
+| Rangpur | 300 | 0 | 0 | 0 | 130 | 0 | 0 |
+
+The symmetry test returned **True**. The Chattogram-Sylhet edge was the longest at 350 km, while the Khulna-Barishal edge was the shortest at 130 km. The sum of the nine unique edge distances was 2,056 km.
+
+#### 8.1.5 Academic interpretation
+
+Symmetry was produced because every route was encoded as an undirected edge with one shared weight. The distance from city u to city v was therefore written into both matrix cells (u,v) and (v,u). An asymmetric matrix would be expected under one-way travel or direction-dependent cost. The adjacency list was better suited to neighbor inspection, while the matrix was better suited to exact pairwise lookup and numerical validation.
+
+#### 8.1.6 Limitations and verification evidence
+
+The graph was treated as a classroom illustration rather than a complete transportation model. Road conditions, route alternatives, travel time, and geographic validation were outside its scope. Reproduction evidence was saved in `outputs/tables/g_transport_adjacency_matrix.csv`, and matrix symmetry is covered by an automated test.
+
+### 8.2 Exercise 2: Six-layout comparison
+
+#### 8.2.1 Objective and controlled comparison
+
+Spring, circular, shell, spectral, Kamada-Kawai, and random layouts were compared for the same `G_ppi` topology. Node identity, size, color, edge set, labels, and figure scale were held constant so that only placement was changed.
+
+#### 8.2.2 Graph construction
+
+The graph was reproduced with `nx.watts_strogatz_graph(n=15, k=3, p=0.3, seed=42)` and relabeled from `P1` through `P15`. The realization contains 15 nodes and 15 edges, has density 0.1429, average degree 2.00, and diameter 8. Degrees range from 1 to 4. Connectivity was verified as **True**.
+
+#### 8.2.3 Layout procedure and criteria
+
+Readability was assessed through edge crossings, label separation, preservation of local ring structure, visibility of rewired shortcuts, and correspondence between graph distance and visual proximity. Layout appearance was not accepted as evidence of community structure.
+
+#### 8.2.4 Verified visual result
 
 ![Six-layout comparison](../visualizations/static/g_ppi_layout_comparison.png)
 
-*Figure 4. Six layouts of the identical `G_ppi` graph.*
+*Figure 4. Six layouts of the identical synthetic `G_ppi` graph.*
 
-**Limitation.** Visual cluster separation is not itself a community-detection result.
+Kamada-Kawai was selected for this realization because pairwise graph-distance stress was minimized and ring-like locality remained legible. Spring placement provided a close alternative. Circular and shell layouts provided orderly labeling but imposed geometry unrelated to distance optimization. Spectral placement emphasized eigenvector structure, while random placement provided no topology-aware organization.
+
+#### 8.2.5 Critical interpretation
+
+The measured average clustering coefficient was **0.000**. Triangle-based clustering was absent in this exact seeded realization despite use of a Watts-Strogatz generator. The figure therefore supports interpretation of locality and shortcuts, but it does not support a claim that visual communities or triangular clusters were discovered. This distinction demonstrates why layout inspection must be checked against calculated statistics.
+
+#### 8.2.6 Limitations and verification evidence
+
+Layout preference remains dependent on graph size, parameterization, task, and labeling requirements. Six individual figures and a combined comparison were saved under `visualizations/static/`. Graph order, size, connectivity, edge count, degree range, diameter, and clustering were recalculated from the generated object.
 
 ### 8.3 Exercise 3: Student-course bipartite network
 
-**Objective.** Model synthetic enrollment between 12 students and 6 courses from stored CSV tables.
+#### 8.3.1 Objective and data design
 
-**Result.** NetworkX confirms bipartiteness. The graph has 40 enrollments. **Data Visualization** is most popular (12 enrollments), and **Imran Kabir** takes the most courses (5).
+A two-mode network was constructed so that enrollment could be represented without inventing student-to-student or course-to-course edges. The synthetic tables contain 12 students, 6 courses, and 40 enrollment records.
+
+#### 8.3.2 Graph construction, analytical procedure, and validation
+
+Students were assigned to partition 0 and courses to partition 1. An undirected edge was added only when an enrollment row linked the two partitions. Bipartiteness was verified through `nx.algorithms.bipartite.is_bipartite`, which returned **True**. The realized bipartite density was 0.5556.
+
+#### 8.3.3 Degree results
+
+**Table 3. Enrollment degree by course**
+
+| Course | Student enrollments |
+|---|---:|
+| Data Visualization | 12 |
+| Machine Learning | 7 |
+| Social Network Analysis | 6 |
+| Database Systems | 5 |
+| Human-Computer Interaction | 5 |
+| Research Methodology | 5 |
+
+An average of 3.33 courses was assigned per student, while an average of 6.67 students was assigned per course. **Data Visualization** had the largest course degree (12), and **Imran Kabir** had the largest student degree (5).
+
+#### 8.3.4 Visual result
 
 ![Student-course graph](../visualizations/static/student_course_bipartite_graph.png)
 
-*Figure 5. Synthetic enrollment graph; circles are students and squares are courses.*
+*Figure 5. Synthetic enrollment network with student circles and course squares.*
 
-**Interpretation.** Data Visualization bridges every represented major. Data Science students also concentrate in Machine Learning and Social Network Analysis, while Multimedia Technology students favor Human-Computer Interaction.
+The two-column arrangement made partition membership explicit. Node shape and color distinguished entity type, and degree differences were visible through incident enrollment edges.
 
-**Limitation.** The graph is synthetic and cannot support conclusions about actual DIU enrollment.
+#### 8.3.5 Academic interpretation
+
+Data Visualization bridges every represented major. Data Science students also concentrate in Machine Learning and Social Network Analysis, while Multimedia Technology students favor Human-Computer Interaction. Degree answered a different question in each partition: student degree represented course load, whereas course degree represented synthetic popularity. A one-mode projection was not used because derived ties were not required.
+
+#### 8.3.6 Limitations and verification evidence
+
+The names and enrollment records were generated solely for teaching. No conclusion was drawn about actual students or enrollment behavior. Source tables were saved under `data/generated/`, calculated degrees were saved in `outputs/tables/student_course_degree_summary.csv`, and partition validity is checked by an automated test.
 
 ### 8.4 Exercise 4: Weighted Barabasi-Albert visualization
 
-**Objective.** Extend Section 6's 100-node BA graph with seeded integer edge weights from 1 through 10.
+#### 8.4.1 Objective and graph construction
 
-**Result.** 196 edges received weights with observed range 1–10 and mean 5.39. Width makes high-weight ties salient, but hubs remain defined by node degree rather than edge width.
+The effect of edge-width encoding was examined on the supplied 100-node Barabasi-Albert graph. The topology was generated with `n=100`, `m=2`, and seed 42. It contains 100 nodes and 196 edges, with average degree 3.92 and maximum degree 36.
+
+#### 8.4.2 Weight assignment procedure
+
+Every edge received one reproducible integer weight from 1 through 10 through a separately seeded pseudorandom generator. The topology was copied before weighting, so the unweighted and weighted figures contain identical nodes and edges. Edge width was scaled from weight; degree and layout position were not recomputed from weight.
+
+#### 8.4.3 Verified weight distribution
+
+**Table 4. Frequency of assigned edge weights**
+
+| Edge weight | Number of edges |
+|---:|---:|
+| 1 | 16 |
+| 2 | 26 |
+| 3 | 18 |
+| 4 | 25 |
+| 5 | 20 |
+| 6 | 18 |
+| 7 | 17 |
+| 8 | 14 |
+| 9 | 25 |
+| 10 | 17 |
+
+The range was 1-10, the mean was 5.388, the median was 5.0, and the population standard deviation was 2.852. Total assigned edge weight was 1,056.
+
+#### 8.4.4 Visual result
 
 ![Weighted BA graph](../visualizations/static/barabasi_albert_weighted.png)
 
-*Figure 6. Synthetic BA graph with normalized edge-width encoding.*
+*Figure 6. Seeded edge weights represented by line width in the synthetic Barabasi-Albert graph.*
 
-**Interpretation.** The view changes which ties attract attention, but random exercise weights do not constitute empirical importance. Edge weight and node centrality can interact, yet they are not interchangeable.
+Thicker lines increased perceptual salience for high-weight edges, while the hub-and-spoke topology remained unchanged. The unweighted companion image permits a direct encoding comparison.
 
-**Limitation.** Random weights demonstrate encoding only.
+#### 8.4.5 Academic interpretation
+
+Edge weight and node centrality were kept conceptually separate. A high-weight edge was not interpreted as a high-degree node, and a prominent hub was not assumed to possess high-weight incident ties. Weighted centrality would require the weight to be defined as strength, capacity, cost, or distance; such a definition was not justified for the random teaching weights.
+
+#### 8.4.6 Limitations and verification evidence
+
+The weights are synthetic and demonstrate encoding only. The complete edge table was saved in `outputs/tables/barabasi_albert_edge_weights.csv`. Automated checks verify node and edge counts, the 1-10 range, and deterministic assignment.
 
 ### 8.5 Exercise 5: Statistical comparison of generative models
 
-**Table 2. Statistical comparison of Section 3 models**
+#### 8.5.1 Objective, model construction, and parameters
 
-| Model | Nodes | Edges | Density | Avg. clustering | Avg. path | Max degree | Degree SD |
-|---|---:|---:|---:|---:|---:|---:|---:|
-| Erdos-Renyi G(n,p) | 30 | 33 | 0.076 | 0.072 | 3.828 (largest connected component) | 4 | 1.166 |
-| Watts-Strogatz small-world | 30 | 60 | 0.138 | 0.346 | 2.984 (whole graph) | 5 | 0.632 |
-| Barabasi-Albert scale-free | 30 | 56 | 0.129 | 0.300 | 2.182 (whole graph) | 18 | 3.521 |
+Three mechanisms were compared under the supplied parameters: Erdos-Renyi G(30, 0.08), Watts-Strogatz WS(30, 4, 0.1), and Barabasi-Albert BA(30, 2), each with seed 42. Random mixing, local clustering with rewiring, and preferential attachment were thereby contrasted.
+
+#### 8.5.2 Metric procedure
+
+Node count, edge count, density, average degree, clustering, connectivity, component count, average shortest-path length, maximum degree, and degree standard deviation were calculated. For the disconnected Erdos-Renyi realization, path length was calculated only on the largest connected component; a misleading whole-graph value was not reported.
+
+#### 8.5.3 Verified statistical results
+
+**Table 5. Statistical comparison of the three seeded models**
+
+| Model | Nodes | Edges | Density | Avg. degree | Clustering | Avg. path | Components | Max degree | Degree SD |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| Erdos-Renyi G(n,p) | 30 | 33 | 0.076 | 2.200 | 0.072 | 3.828 | 3 | 4 | 1.166 |
+| Watts-Strogatz small-world | 30 | 60 | 0.138 | 4.000 | 0.346 | 2.984 | 1 | 5 | 0.632 |
+| Barabasi-Albert scale-free | 30 | 56 | 0.129 | 3.733 | 0.300 | 2.182 | 1 | 18 | 3.521 |
 
 ![Generative-model degree distributions](../visualizations/static/generative_models_degree_distribution.png)
 
-*Figure 7. Degree distributions expose homogeneous, small-world, and hub-dominated structures.*
+*Figure 7. Degree distributions for the three exact seeded realizations.*
 
-**Interpretation.** Watts-Strogatz best captures high clustering with short paths, whereas Barabasi-Albert best captures hubs and heterogeneous degree. A realistic social network may combine both properties; none of these simple models is universally best. Erdős-Rényi provides a useful random baseline but lacks both mechanisms.
+#### 8.5.4 Model-by-model interpretation
 
-**Limitation.** Results come from one seeded 30-node realization per model and are sensitive to parameter choice.
+The Erdos-Renyi realization produced three components, low clustering (0.072), and maximum degree 4; it served as a homogeneous random baseline. The Watts-Strogatz realization remained connected and produced the highest clustering (0.346) with a narrow degree distribution. The Barabasi-Albert realization remained connected, produced the shortest average path (2.182), and generated maximum degree 18 with degree standard deviation 3.521.
+
+#### 8.5.5 Comparative conclusion
+
+Watts-Strogatz captures clustering and short paths; Barabasi-Albert captures hubs and heterogeneous degree. A social network can require both properties, so no model is universally best. The small-world mechanism was better suited to local clustering and short-path interpretation, whereas preferential attachment was better suited to hub and degree-heterogeneity interpretation. Social-network realism was therefore treated as multidimensional.
+
+#### 8.5.6 Limitations and verification evidence
+
+Only one small seeded realization was compared per parameter set. Ranking may change across seeds, sizes, and parameters; repeated simulation with uncertainty intervals would be required for population-level inference. The comparison was saved in `outputs/tables/generative_models_comparison.csv`, and separate degree-distribution figures were generated for every model.
 
 ### 8.6 Exercise 6: Interactive node-color dashboard
 
-The standalone Plotly dashboard preserves node positions while a dropdown toggles between categorical interest-group color and continuous in-degree color. Hover text reports node ID, group, in-degree, and out-degree. Edges remain visible in both modes. The synthetic graph reuses the supplied Section 9 generation logic and is embedded in the final website.
+#### 8.6.1 Objective and interaction design
 
-**Limitation.** Directed edges are represented as line segments without arrowheads in Plotly; direction remains available through in/out-degree metrics and the graph definition.
+An interactive view was produced so that one directed social graph could be interpreted through two node-color variables without a positional confound. Categorical color represents interest group, while a continuous Viridis scale represents in-degree.
 
-### 8.7 Exercise 7: Research-domain network
+#### 8.6.2 Graph construction and generation procedure
 
-**Objective.** Represent a synthetic knowledge graph for Applied AI and Multimedia using 15 typed nodes and 21 weighted semantic links.
+The supplied seeded logic produced 20 users and 52 directed follow edges. Directed density was 0.1368. Interest-group similarity increased selection probability during generation, and duplicate selections were removed before edge insertion.
 
-**Result.** **Recommendation Systems** has the highest weighted betweenness (0.3663).
+#### 8.6.3 Group and degree results
+
+**Table 6. Synthetic interest-group membership**
+
+| Interest group | Users |
+|---|---:|
+| Music | 2 |
+| Sports | 8 |
+| Tech | 7 |
+| Travel | 3 |
+
+Mean in-degree was 2.60. In-degree ranged from 1 to 5, and out-degree ranged from 1 to 5. The three largest in-degree results were user_11 (5), user_12 (4), user_13 (4).
+
+#### 8.6.4 Dashboard implementation and verification
+
+The dropdown contains **Interest Group** and **In-Degree** modes. Node coordinates, edges, labels, and hover fields are preserved; only marker color, legend, and scale metadata are changed. Hover text reports identifier, group, in-degree, and out-degree. The stored position-preservation result is **True**.
+
+![Network dashboard colored by interest group](../screenshots/network-toggle-before.png)
+
+*Figure 8. Initial dashboard state with categorical interest-group color.*
+
+![Network dashboard colored by in-degree](../screenshots/network-toggle-in-degree.png)
+
+*Figure 9. Continuous in-degree color with unchanged node positions.*
+
+#### 8.6.5 Academic interpretation
+
+The categorical mode supports comparison of group mixing, while the continuous mode emphasizes incoming-tie popularity. Because position is fixed, perceptual change can be attributed to color rather than a new layout. The exercise demonstrates coordinated encoding rather than evidence about real social-media users.
+
+#### 8.6.6 Limitations and verification evidence
+
+The graph is synthetic. Arrowheads are not displayed in the Plotly line traces, so direction is conveyed through calculated degrees rather than edge-end markers. The artifact was saved as `visualizations/interactive/network_color_toggle_dashboard.html`, and both dropdown states were verified through browser testing.
+
+### 8.7 Exercise 7: Research-domain knowledge graph
+
+#### 8.7.1 Objective and semantic schema
+
+A synthetic knowledge graph was constructed for Applied AI and Multimedia. Nodes were typed as research areas, methods, tools, applications, or outcomes. Edges received a named semantic relationship and an illustrative strength from 1 through 3.
+
+#### 8.7.2 Graph construction and metric procedure
+
+The graph contains 15 nodes and 21 undirected links. Density is 0.2000, average degree is 2.80, and connectivity was verified as **True**. Degree centrality, inverse-strength weighted betweenness, closeness, and strength-weighted PageRank were calculated. Edge distance was defined as (1 / strength) before shortest-path betweenness was evaluated.
+
+#### 8.7.3 Verified centrality results
+
+**Table 7. Five highest weighted-betweenness nodes**
+
+| Node | Type | Degree | Betweenness | Closeness | PageRank |
+|---|---|---:|---:|---:|---:|
+| Recommendation Systems | Research area | 5 | 0.5385 | 0.5600 | 0.1297 |
+| Artificial Intelligence | Research area | 3 | 0.2509 | 0.4667 | 0.0790 |
+| Deep Learning | Method | 4 | 0.1923 | 0.4667 | 0.1011 |
+| Computer Vision | Research area | 3 | 0.1667 | 0.4375 | 0.0795 |
+| Graph Neural Networks | Method | 3 | 0.1612 | 0.5000 | 0.0630 |
+
+**Recommendation Systems** received the largest weighted-betweenness value (0.5385).
+
+#### 8.7.4 Visual result
 
 ![Research-domain graph](../visualizations/static/domain_graph.png)
 
-*Figure 8. Synthetic applied-AI and multimedia research knowledge graph.*
+*Figure 10. Synthetic Applied AI and Multimedia knowledge graph with typed nodes and weighted links.*
 
-**Interpretation.** Recommendation Systems is the strongest bridge by betweenness, linking research themes, technical methods, and application outcomes. The graph is synthetic and demonstrates structural interpretation, not empirical evidence about a real research community.
+#### 8.7.5 Academic interpretation
 
-**Limitation.** Nodes and relationships are illustrative and not extracted from publications.
+Recommendation Systems is the strongest bridge by inverse-strength weighted betweenness, linking research themes, technical methods, and application outcomes. The graph is synthetic and demonstrates structural interpretation, not empirical evidence about a real research community. Centrality remained dependent on the modeled relationships: a method or application may appear prominent because otherwise separated categories are connected through it.
+
+#### 8.7.6 Limitations and verification evidence
+
+The nodes, relationships, and strengths were designed for demonstration and were not extracted from publications. The inverse-strength transformation assumes that a stronger semantic relationship represents a shorter effective distance; a different substantive meaning for strength would require a different transformation. Tables were saved under `data/generated/` and `outputs/tables/domain_graph_metrics.csv`, and both static and interactive visualizations were generated.
 
 ## 9. Discussion
 
@@ -199,7 +380,7 @@ The data end in 2018, cover ten sellers in Thailand, and may not generalize to o
 
 ## 11. Conclusion and recommendations
 
-This project demonstrates a reproducible bridge between tabular engagement analytics and network visualization. Video posts show the highest observed mean engagement, but the finding is descriptive. Kamada-Kawai most clearly presents the supplied small-world teaching graph, the weighted BA exercise distinguishes tie salience from node centrality, and the generative-model comparison shows why social-network realism is multidimensional.
+A reproducible bridge between tabular engagement analytics and network visualization is demonstrated. The highest observed mean engagement is associated with video posts, but the finding is descriptive. The supplied small-world teaching graph is presented most clearly by Kamada-Kawai, tie salience is distinguished from node centrality in the weighted BA exercise, and the multidimensional nature of social-network realism is revealed by the generative-model comparison.
 
 Recommended next steps are to: (1) obtain ethically collected reach and impression denominators; (2) analyze multiple pages and time periods; (3) use repeated simulations and uncertainty intervals when comparing graph models; (4) test community detection separately from visual layout; and (5) retain the distinction between observed edges and synthetic teaching structures.
 

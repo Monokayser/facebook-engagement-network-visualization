@@ -25,10 +25,31 @@ def transport_representations(graph: nx.Graph) -> tuple[pd.DataFrame, dict[str, 
     symmetric = bool(np.allclose(matrix.to_numpy(), matrix.to_numpy().T))
     matrix.to_csv(TABLES / "g_transport_adjacency_matrix.csv")
     adjacency = {str(node): list(graph.neighbors(node)) for node in nodes}
+    weighted_edges = [
+        {
+            "source": str(source),
+            "target": str(target),
+            "distance_km": int(data["weight"]),
+        }
+        for source, target, data in graph.edges(data=True)
+    ]
+    longest_route = max(weighted_edges, key=lambda edge: edge["distance_km"])
+    shortest_route = min(weighted_edges, key=lambda edge: edge["distance_km"])
     return matrix, {
         "adjacency_list": adjacency,
         "matrix_symmetric": symmetric,
         "node_order": nodes,
+        "nodes": graph.number_of_nodes(),
+        "edges": graph.number_of_edges(),
+        "density": float(nx.density(graph)),
+        "weighted_edges": weighted_edges,
+        "total_recorded_distance_km": int(
+            sum(edge["distance_km"] for edge in weighted_edges)
+        ),
+        "longest_route": longest_route,
+        "shortest_route": shortest_route,
+        "highest_degree_city": max(graph.degree, key=lambda item: item[1])[0],
+        "highest_degree": int(max(dict(graph.degree()).values())),
         "reason": (
             "Each undirected weighted edge contributes the same weight to cells "
             "(u, v) and (v, u), so the matrix equals its transpose. A directed "
@@ -116,6 +137,15 @@ def student_course_findings() -> tuple[pd.DataFrame, dict[str, Any]]:
         "most_popular_course_enrollments": int(popular["degree"]),
         "most_enrolled_student": most_courses["label"],
         "most_enrolled_student_courses": int(most_courses["degree"]),
+        "bipartite_density": float(
+            nx.algorithms.bipartite.density(graph, students["student_id"].tolist())
+        ),
+        "mean_courses_per_student": float(student_summary["degree"].mean()),
+        "mean_students_per_course": float(course_summary["degree"].mean()),
+        "course_degrees": [
+            {"course": row["label"], "enrollments": int(row["degree"])}
+            for _, row in course_summary.iterrows()
+        ],
         "pattern": (
             "Data Visualization bridges every represented major. Data Science "
             "students also concentrate in Machine Learning and Social Network Analysis, "
@@ -128,8 +158,10 @@ def domain_metrics() -> tuple[pd.DataFrame, dict[str, Any]]:
     """Calculate centrality metrics for the synthetic research graph."""
 
     graph, nodes, _ = load_domain_graph()
+    for source, target, data in graph.edges(data=True):
+        graph[source][target]["distance"] = 1 / data["weight"]
     degree = nx.degree_centrality(graph)
-    betweenness = nx.betweenness_centrality(graph, weight="weight")
+    betweenness = nx.betweenness_centrality(graph, weight="distance")
     closeness = nx.closeness_centrality(graph)
     pagerank = nx.pagerank(graph, weight="weight")
     records = []
@@ -159,9 +191,26 @@ def domain_metrics() -> tuple[pd.DataFrame, dict[str, Any]]:
         "density": nx.density(graph),
         "top_betweenness_node": top["label"],
         "top_betweenness_value": float(top["betweenness_centrality"]),
+        "connected": bool(nx.is_connected(graph)),
+        "average_degree": float(
+            sum(dict(graph.degree()).values()) / graph.number_of_nodes()
+        ),
+        "top_centrality_records": [
+            {
+                "label": row["label"],
+                "node_type": row["node_type"],
+                "degree": int(row["degree"]),
+                "degree_centrality": float(row["degree_centrality"]),
+                "betweenness_centrality": float(row["betweenness_centrality"]),
+                "closeness_centrality": float(row["closeness_centrality"]),
+                "pagerank": float(row["pagerank"]),
+            }
+            for _, row in metrics.head(5).iterrows()
+        ],
         "interpretation": (
-            f"{top['label']} is the strongest bridge by betweenness, linking "
-            "research themes, technical methods, and application outcomes. "
+            f"{top['label']} is the strongest bridge by inverse-strength weighted "
+            "betweenness, linking research themes, technical methods, and application "
+            "outcomes. "
             "The graph is synthetic and demonstrates structural interpretation, "
             "not empirical evidence about a real research community."
         ),

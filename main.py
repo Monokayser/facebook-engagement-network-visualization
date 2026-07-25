@@ -138,6 +138,14 @@ def run_pipeline() -> dict[str, Any]:
         ),
         "nodes": ppi.number_of_nodes(),
         "edges": ppi.number_of_edges(),
+        "density": float(nx.density(ppi)),
+        "connected": bool(nx.is_connected(ppi)),
+        "average_degree": float(
+            sum(dict(ppi.degree()).values()) / ppi.number_of_nodes()
+        ),
+        "diameter": int(nx.diameter(ppi)),
+        "minimum_degree": int(min(dict(ppi.degree()).values())),
+        "maximum_degree": int(max(dict(ppi.degree()).values())),
         "average_clustering": float(nx.average_clustering(ppi)),
     }
     _write_summary_text(
@@ -180,6 +188,20 @@ def run_pipeline() -> dict[str, Any]:
         "minimum_weight": int(edge_weights["weight"].min()),
         "maximum_weight": int(edge_weights["weight"].max()),
         "mean_weight": float(edge_weights["weight"].mean()),
+        "median_weight": float(edge_weights["weight"].median()),
+        "weight_standard_deviation": float(edge_weights["weight"].std(ddof=0)),
+        "total_edge_weight": int(edge_weights["weight"].sum()),
+        "average_degree": float(
+            sum(dict(original_ba.degree()).values()) / original_ba.number_of_nodes()
+        ),
+        "maximum_degree": int(max(dict(original_ba.degree()).values())),
+        "weight_frequencies": {
+            str(int(weight)): int(count)
+            for weight, count in edge_weights["weight"]
+            .value_counts()
+            .sort_index()
+            .items()
+        },
         "interpretation": (
             "Edge width changes which ties appear salient, but seeded random weights "
             "are an encoding demonstration. Node centrality and edge weight are related "
@@ -221,6 +243,32 @@ def run_pipeline() -> dict[str, Any]:
         "dropdown_modes": ["Interest Group", "In-Degree"],
         "standalone_html": social_path.relative_to(ROOT).as_posix(),
         "positions_preserved": True,
+        "directed": True,
+        "density": float(nx.density(social)),
+        "mean_in_degree": float(
+            sum(dict(social.in_degree()).values()) / social.number_of_nodes()
+        ),
+        "minimum_in_degree": int(min(dict(social.in_degree()).values())),
+        "maximum_in_degree": int(max(dict(social.in_degree()).values())),
+        "minimum_out_degree": int(min(dict(social.out_degree()).values())),
+        "maximum_out_degree": int(max(dict(social.out_degree()).values())),
+        "interest_group_counts": {
+            group: int(
+                sum(
+                    data["interest_group"] == group
+                    for _, data in social.nodes(data=True)
+                )
+            )
+            for group in sorted(
+                {data["interest_group"] for _, data in social.nodes(data=True)}
+            )
+        },
+        "highest_in_degree_users": [
+            {"user": user, "in_degree": int(degree)}
+            for user, degree in sorted(
+                social.in_degree(), key=lambda item: (-item[1], item[0])
+            )[:3]
+        ],
     }
     _write_summary_text(
         "exercise_06.txt",

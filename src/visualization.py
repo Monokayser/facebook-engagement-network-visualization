@@ -554,7 +554,9 @@ def create_domain_interactive(graph: nx.Graph) -> Path:
 
     position = nx.spring_layout(graph, seed=SEED, weight="weight", k=0.8)
     degree = nx.degree_centrality(graph)
-    betweenness = nx.betweenness_centrality(graph, weight="weight")
+    for source, target, data in graph.edges(data=True):
+        graph[source][target]["distance"] = 1 / data["weight"]
+    betweenness = nx.betweenness_centrality(graph, weight="distance")
     edge_x: list[float | None] = []
     edge_y: list[float | None] = []
     for source, target in graph.edges():
@@ -580,7 +582,7 @@ def create_domain_interactive(graph: nx.Graph) -> Path:
                 f"<br>Type: {graph.nodes[node]['node_type']}"
                 f"<br>Degree: {graph.degree(node)}"
                 f"<br>Degree centrality: {degree[node]:.3f}"
-                f"<br>Betweenness: {betweenness[node]:.3f}"
+                f"<br>Inverse-strength betweenness: {betweenness[node]:.3f}"
             )
             for node in nodes
         ],
@@ -590,7 +592,7 @@ def create_domain_interactive(graph: nx.Graph) -> Path:
             "color": [betweenness[node] for node in nodes],
             "colorscale": "Tealgrn",
             "showscale": True,
-            "colorbar": {"title": "Betweenness"},
+            "colorbar": {"title": "Inverse-strength<br>betweenness"},
             "line": {"width": 1, "color": "white"},
         },
     )

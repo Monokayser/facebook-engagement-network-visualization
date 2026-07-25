@@ -53,7 +53,7 @@ The official UCI archive was used because Kaggle API credentials were not config
 - Data Visualization is the most popular synthetic course (12 enrollments); Imran Kabir takes the most courses (5).
 - Section 6's BA graph has 196 edges with seeded weights from 1 to 10.
 - Watts-Strogatz captures clustering and short paths, while Barabási-Albert captures hubs and heterogeneous degree.
-- Recommendation Systems is the strongest synthetic bridge in the domain graph by weighted betweenness (`0.3663`).
+- Recommendation Systems is the strongest synthetic bridge by inverse-strength weighted betweenness (`0.5385`).
 
 ## Technology
 
