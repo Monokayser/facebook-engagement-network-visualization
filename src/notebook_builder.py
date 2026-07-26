@@ -7,6 +7,7 @@ import sys
 from copy import deepcopy
 from pathlib import Path
 
+import black
 import nbformat
 from nbclient import NotebookClient
 from nbconvert import HTMLExporter, PythonExporter
@@ -484,7 +485,10 @@ def generate_exercise_artifacts() -> list[Path]:
 
         nbformat.write(notebook, source_path)
         python_source, _ = python_exporter.from_notebook_node(notebook)
-        python_path.write_text(python_source, encoding="utf-8")
+        python_path.write_text(
+            black.format_str(python_source, mode=black.Mode()),
+            encoding="utf-8",
+        )
 
         executed = deepcopy(notebook)
         client = NotebookClient(

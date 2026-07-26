@@ -8,6 +8,7 @@ line-length = 88
 target-version = "py312"
 exclude = [
   "_source_materials",
+  "exercises",
   "notebooks",
   "public",
   "visualizations",

@@ -40,8 +40,8 @@
       "sha256": "a82fdf080d38bc7d0297f49a3aee34f8bdebc35b547008cdacec4393141d16b4"
     },
     "exercises/01_weighted_adjacency/exercise_01_weighted_adjacency.py": {
-      "bytes": 2089,
-      "sha256": "ba8eae86158d8f08b4b8c020fecd223be6c53570f62e2291771181f08aad4f1a"
+      "bytes": 2095,
+      "sha256": "f961f380393fe3b9a0944a083186c8f83fd9f81b8bc099cc6ab79aefa23651b5"
     },
     "exercises/01_weighted_adjacency/exercise_01_weighted_adjacency_executed.ipynb": {
       "bytes": 8640,
@@ -56,8 +56,8 @@
       "sha256": "29daec7d6f010caa562147dcc99af85ac1834fbaf884020f2f3d69f13c38f6e1"
     },
     "exercises/02_six_layout_comparison/exercise_02_six_layout_comparison.py": {
-      "bytes": 1979,
-      "sha256": "5832756c818387d62a5a9dc1fefb5de9b4324b7b9e7b906687aa3da245985fe8"
+      "bytes": 2043,
+      "sha256": "ed0a6d7c0b2d1a76e70fd925b68752aa2fbef2fef57d05119623a764c85ccefb"
     },
     "exercises/02_six_layout_comparison/exercise_02_six_layout_comparison_executed.ipynb": {
       "bytes": 1000529,
@@ -72,8 +72,8 @@
       "sha256": "212378a7b05727fb620ea35d575f059c5dcbe22f2da49935d927f550be32e070"
     },
     "exercises/03_student_course_bipartite/exercise_03_student_course_bipartite.py": {
-      "bytes": 2107,
-      "sha256": "32d81776e5c65164fe8aa34850234a551448fb4cb1b9f23c330524e8376079f8"
+      "bytes": 2171,
+      "sha256": "d5bc72668c447c818fec778b70f98aa016e660100192a02f7ca7d940879521fb"
     },
     "exercises/03_student_course_bipartite/exercise_03_student_course_bipartite_executed.ipynb": {
       "bytes": 1009003,
@@ -88,8 +88,8 @@
       "sha256": "56008ddabb5d85733a092e2b09dfb9c7a15a7f559a1db3325bc1b43ea95ca92f"
     },
     "exercises/04_weighted_barabasi_albert/exercise_04_weighted_barabasi_albert.py": {
-      "bytes": 1903,
-      "sha256": "e7636a17b4cb1c09ed722be3f1e769897de7c53a187e550d03c9b91ff16f0745"
+      "bytes": 1967,
+      "sha256": "fc4e3781820bb39ef4749158b6b3461836e911e682c4ee2b546ac4d8d082206e"
     },
     "exercises/04_weighted_barabasi_albert/exercise_04_weighted_barabasi_albert_executed.ipynb": {
       "bytes": 858958,
@@ -104,8 +104,8 @@
       "sha256": "330993bc6ab5c65e3730bb09dcfcbd324ae9a87c4ff582f3a9ca06c0e6efc9ea"
     },
     "exercises/05_generative_model_comparison/exercise_05_generative_model_comparison.py": {
-      "bytes": 2008,
-      "sha256": "b067509915c1c160e3fab3d63b338ba23e0c565bc696002cde1cec4315974d4e"
+      "bytes": 2111,
+      "sha256": "72deaf2389a2d0a433c14598ae2c20f64bab51914b04e1a901f1000c821a6565"
     },
     "exercises/05_generative_model_comparison/exercise_05_generative_model_comparison_executed.ipynb": {
       "bytes": 184351,
@@ -120,8 +120,8 @@
       "sha256": "fab7974e9f8cfec30c8fe5810ae7b900f0340019424c1b59408adee12f5d51c3"
     },
     "exercises/06_interactive_color_dashboard/exercise_06_interactive_color_dashboard.py": {
-      "bytes": 2130,
-      "sha256": "c1e422d91af00b75ca3ea40a8a34c07e5e1518089920c57aa125aa24222dbdc6"
+      "bytes": 2209,
+      "sha256": "9924a2ee5392bb48ff9eb04ab0f1eda8f0a85e3ad0b54c77db293b25c9326c44"
     },
     "exercises/06_interactive_color_dashboard/exercise_06_interactive_color_dashboard_executed.ipynb": {
       "bytes": 4260,
@@ -136,8 +136,8 @@
       "sha256": "a7a3077f6bb082d76db96a496ed0c7721b385416a47336938f9b2c4779b3931e"
     },
     "exercises/07_applied_ai_knowledge_graph/exercise_07_applied_ai_knowledge_graph.py": {
-      "bytes": 1994,
-      "sha256": "34e6ac164ec986ae96ff88ac18280f32682ed67dd4f42b3ea9507af7a815704e"
+      "bytes": 2053,
+      "sha256": "89f080f4a47a6ad20968aeee4c2293def031e88b96efc09c8fc3bf994f347a3a"
     },
     "exercises/07_applied_ai_knowledge_graph/exercise_07_applied_ai_knowledge_graph_executed.ipynb": {
       "bytes": 456704,
