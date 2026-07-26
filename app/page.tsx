@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import MobileNavigation from "./mobile-navigation";
 
 export const metadata: Metadata = {
   title: "Facebook Engagement & Network Visual Analytics",
@@ -70,12 +71,13 @@ export default function Home() {
             <small>Summer 2026</small>
           </span>
         </a>
-        <nav aria-label="Primary navigation">
+        <nav className="desktop-nav" aria-label="Primary navigation">
           <a href="#findings">Findings</a>
           <a href="#networks">Networks</a>
           <a href="#exercises">Exercises</a>
           <a href="#method">Method</a>
         </nav>
+        <MobileNavigation />
         <a className="button button-small" href="/report.pdf">
           Read report
         </a>
@@ -161,6 +163,7 @@ export default function Home() {
           {/* The generated chart is already a publication-resolution asset. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
+            className="primary-chart"
             src="/images/engagement_by_post_type.png"
             alt="Grouped bars comparing mean reactions, comments, and shares for video, status, link, and photo posts"
           />
