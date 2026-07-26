@@ -2,6 +2,9 @@
 
 A reproducible academic project that analyzes 7,050 anonymized Facebook posts and completes seven graph-visualization exercises with Python, Pandas, NetworkX, Matplotlib, NumPy, SciPy, and Plotly.
 
+**Public website:** [GitHub Pages](https://monokayser.github.io/facebook-engagement-network-visualization/)
+**Source repository:** [Monokayser/facebook-engagement-network-visualization](https://github.com/Monokayser/facebook-engagement-network-visualization)
+
 **Student:** S. M. Monowar Kayser (`253-25-019`)  
 **Course:** Data Visualization (`CSE628`), Summer 2026  
 **Teacher:** Sadat Hasan, Adjunct Faculty  
@@ -78,8 +81,10 @@ outputs/                 Verified JSON, tables, and exercise summaries
 report/                  Markdown, DOCX, and PDF academic reports
 public/                  Deployment-ready reports, images, data, and HTML
 app/                     Responsive academic dashboard
+website/                 Generated multi-page GitHub Pages site
 tests/                   Python and rendered-site tests
 main.py                  Complete reproducible pipeline
+.github/workflows/       Continuous validation and Pages deployment
 ```
 
 ## Environment setup
@@ -107,13 +112,15 @@ Keep `kaggle.json` outside the repository and follow Kaggle's official API crede
 ## Reproduce the project
 
 1. Confirm `data/raw/Live_20210128.csv` exists, or download the official UCI archive as described in [data/README.md](data/README.md).
-2. Run the complete pipeline:
+2. Run the complete pipeline. It regenerates the cleaned data, exercises,
+   visualizations, executed notebooks, reports, both website targets, and the
+   SHA-256 artifact manifest:
 
    ```bash
    python main.py
    ```
 
-3. Execute notebooks in order:
+3. The pipeline executes and saves the notebooks in this order:
 
    1. `01_data_understanding.ipynb`
    2. `02_data_cleaning.ipynb`
@@ -157,6 +164,18 @@ Detailed implementation notes and limitations are in [exercises/README.md](exerc
 - [Verified analytical summary](outputs/analysis_summary.json)
 
 The interactive dashboard embeds self-contained Plotly files, works without local absolute paths, and provides responsive desktop, tablet, and mobile layouts.
+
+Every exercise has a dedicated generated web page containing its source
+definition, relevant data download, Python implementation, visual output,
+verified result, interpretation, limitation, and report link.
+
+## Public deployment
+
+GitHub Actions rebuilds the project with Python 3.12, validates the notebooks,
+tests, reports, and site assets, and deploys `website/` through GitHub Pages.
+Relative URLs make the static site safe under the repository subpath. The
+configured Sites project is maintained as a secondary deployment of the same
+canonical content.
 
 ## Testing
 

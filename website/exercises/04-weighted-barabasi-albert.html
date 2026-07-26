@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Academic Facebook engagement and network visualization project">
+<title>Weighted Barabasi-Albert graph | CSE628 Visual Analytics</title>
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--ink:#17324d;--paper:#f7f5ef;--coral:#e76f51;--blue:#3973a8;--muted:#607384;--line:#d9e0e5;--card:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 Arial,sans-serif}
+a{color:#bd4e35}a:focus-visible,button:focus-visible{outline:3px solid #1376a8;outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 36px));margin:auto}nav{position:sticky;top:0;z-index:10;background:rgba(247,245,239,.97);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:68px}nav a{text-decoration:none;font-weight:700;color:var(--ink)}nav .links{display:flex;gap:18px;flex-wrap:wrap}
+header{padding:72px 0 54px;background:var(--ink);color:#fff}header p{color:#cbd5dc;max-width:800px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.78rem;font-weight:800;color:var(--coral)}
+h1{font-size:clamp(2.5rem,6vw,5.2rem);line-height:1.02;letter-spacing:-.045em;margin:.25em 0}h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.12}h3{line-height:1.25}
+main section{padding:54px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(23,50,77,.05)}
+.card strong.metric{display:block;font-size:2rem}.button{display:inline-block;background:var(--coral);color:#fff!important;text-decoration:none;padding:11px 17px;border-radius:999px;font-weight:800;margin:4px 8px 4px 0}
+.button.secondary{background:#e8edf1;color:var(--ink)!important}figure{margin:28px 0}img{display:block;max-width:100%;height:auto;border-radius:14px}figcaption{color:var(--muted);font-size:.92rem;margin-top:8px}
+iframe{width:100%;min-height:720px;border:1px solid var(--line);border-radius:14px;background:#fff}pre{overflow:auto;background:#10263a;color:#eaf2f6;border-radius:14px;padding:20px;font:13px/1.55 Consolas,monospace}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#e9eef3}
+.notice{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}footer{padding:38px 0;background:#11283c;color:#fff}footer a{color:#ffab93}
+@media(max-width:850px){.grid{grid-template-columns:1fr}nav .wrap{align-items:flex-start;padding:12px 0;flex-direction:column}iframe{min-height:580px}}
+</style></head>
+<body>
+<nav><div class="wrap"><a href="../index.html">CSE628 Visual Analytics</a>
+<div class="links"><a href="../index.html#findings">Findings</a>
+<a href="../exercises/index.html">Exercises</a>
+<a href="../methodology.html">Methodology</a>
+<a href="../report/report.pdf">Report</a>
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">GitHub</a></div></div></nav>
+<header><div class="wrap"><p class="eyebrow">Exercise 04 · Complete study</p>
+<h1>Weighted Barabasi-Albert graph</h1><p>Supplied Section 6 Barabasi-Albert graph definition</p></div></header>
+<main><section><div class="wrap"><h2>Objective and data source</h2>
+<p>The exercise reuses the required teaching definition and saves every calculated
+artifact through the deterministic Python pipeline. Relevant data:
+<a href="../downloads/outputs__tables__barabasi_albert_edge_weights.csv"><code>outputs/tables/barabasi_albert_edge_weights.csv</code></a>.</p>
+<div class="notice"><strong>Scope:</strong> The Facebook dataset is used for the empirical
+analysis. This mandatory network exercise uses the supplied or explicitly synthetic
+relationship data because the Facebook table has no verified user-to-user edges.</div>
+<h2>Verified result</h2><p>196 edges use reproducible weights from 1 to 10.</p><figure><img src="../images/barabasi_albert_weighted.png" alt="Weighted Barabasi-Albert graph visualization"><figcaption>Calculated visual output for Exercise 4.</figcaption></figure>
+<h2>Python implementation</h2><pre><code>def add_reproducible_edge_weights(graph: nx.Graph, seed: int = SEED) -&gt; nx.Graph:
+    &quot;&quot;&quot;Copy a graph and assign integer edge weights from 1 through 10.&quot;&quot;&quot;
+
+    weighted = graph.copy()
+    rng = random.Random(seed)
+    for source, target in weighted.edges():
+        weighted[source][target][&quot;weight&quot;] = rng.randint(1, 10)
+    return weighted
+
+
+def create_weighted_ba_figures(
+    original: nx.Graph, weighted: nx.Graph
+) -&gt; tuple[Path, Path]:
+    &quot;&quot;&quot;Draw Section 6&#x27;s BA graph before and after edge-weight encoding.&quot;&quot;&quot;
+
+    position = nx.spring_layout(original, seed=SEED, k=0.25)
+    degrees = dict(original.degree())
+    sizes = [28 + 7 * degrees[node] for node in original.nodes()]
+    hubs = set(sorted(degrees, key=degrees.get, reverse=True)[:5])
+    node_colors = [
+        COLORS[&quot;coral&quot;] if node in hubs else COLORS[&quot;blue&quot;] for node in original.nodes()
+    ]
+    fig, ax = plt.subplots(figsize=(10, 8))
+    nx.draw_networkx(
+        original,
+        position,
+        ax=ax,
+        node_size=sizes,
+        node_color=node_colors,
+        edge_color=&quot;#BCC5CE&quot;,
+        width=0.55,
+        with_labels=False,
+    )
+    ax.set_title(&quot;Section 6 Barabasi-Albert Graph - Unweighted&quot;)
+    ax.axis(&quot;off&quot;)
+    unweighted_path = STATIC / &quot;barabasi_albert_unweighted.png&quot;
+    _save(fig, unweighted_path)
+
+    edge_weights = [weighted[u][v][&quot;weight&quot;] for u, v in weighted.edges()]
+    widths = [0.35 + 2.65 * (weight - 1) / 9 for weight in edge_weights]
+    fig, ax = plt.subplots(figsize=(10, 8))
+    nx.draw_networkx_nodes(
+        weighted, position, ax=ax, node_size=sizes, node_color=node_colors
+    )
+    nx.draw_networkx_edges(
+        weighted,
+        position,
+        ax=ax,
+        width=widths,
+        edge_color=COLORS[&quot;gray&quot;],
+        alpha=0.72,
+    )
+    ax.legend(
+        handles=[
+            Line2D([0], [0], color=COLORS[&quot;gray&quot;], lw=0.6, label=&quot;Weight 1&quot;),
+            Line2D([0], [0], color=COLORS[&quot;gray&quot;], lw=3.0, label=&quot;Weight 10&quot;),
+        ],
+        title=&quot;Edge width encoding&quot;,
+        loc=&quot;upper right&quot;,
+    )
+    ax.set_title(&quot;Section 6 Barabasi-Albert Graph - Edge Weight 1 to 10&quot;)
+    ax.axis(&quot;off&quot;)
+    weighted_path = STATIC / &quot;barabasi_albert_weighted.png&quot;
+    _save(fig, weighted_path)
+    return unweighted_path, weighted_path
+</code></pre>
+<p><a class="button" href="https://github.com/Monokayser/facebook-engagement-network-visualization/tree/main/src">Browse complete Python source</a>
+<a class="button secondary" href="../report/report.pdf">Read report section</a></p>
+<h2>Interpretation and limitation</h2>
+<p>Edge width changes which ties appear salient, but seeded random weights are an encoding demonstration. Node centrality and edge weight are related only when the selected centrality definition explicitly uses weights.</p>
+<p><strong>Limitation:</strong> Random weights demonstrate encoding and do not represent observed tie importance.</p>
+</div></section></main>
+<footer><div class="wrap"><strong>Visual Analytics and Network Analysis</strong>
+<p>S. M. Monowar Kayser · 253-25-019 ·
+Daffodil International University</p>
+<p><a href="../report/report.pdf">PDF report</a> ·
+<a href="../report/report.docx">DOCX report</a> ·
+<a href="../report/report.md">Markdown report</a> ·
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">Source repository</a></p></div></footer></body></html>

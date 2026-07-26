@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import json
 from collections.abc import Iterable
+from copy import copy
 from pathlib import Path
 from typing import Any
+from zipfile import ZIP_DEFLATED, ZipFile
 
 from docx import Document
 from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT, WD_TABLE_ALIGNMENT
@@ -13,6 +15,7 @@ from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
+from reportlab import rl_config
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import letter
@@ -35,6 +38,7 @@ NAVY = RGBColor(23, 50, 77)
 BLUE = RGBColor(57, 115, 168)
 GRAY = RGBColor(82, 96, 109)
 LIGHT = "E9EEF3"
+rl_config.invariant = True
 
 
 def _fmt(value: float, digits: int = 2) -> str:
@@ -360,6 +364,517 @@ The nodes, relationships, and strengths were designed for demonstration and were
 """
 
 
+def _extended_academic_sections(
+    summary: dict[str, Any],
+) -> list[tuple[str, list[str], None, None]]:
+    """Return shared critical context for Markdown, DOCX, and PDF reports."""
+
+    engagement = summary["engagement"]
+    audit = summary["data_cleaning"]
+    exercises = summary["exercises"]
+    return [
+        (
+            "7.1 Conceptual framework for engagement measurement",
+            [
+                (
+                    "Engagement is treated as a family of observable platform actions "
+                    "rather than a direct measurement of attention, satisfaction, or "
+                    "persuasion. A reaction can be produced with comparatively little "
+                    "effort, whereas a comment or share may require additional cognitive "
+                    "or social commitment. Even this distinction is contextual: a short "
+                    "comment may be less consequential than a reaction from an influential "
+                    "account, and a share may be critical, supportive, or merely archival. "
+                    "The available table contains counts but no semantic evidence about "
+                    "motivation. Accordingly, the analysis preserves reactions, comments, "
+                    "and shares as separate variables before combining them into total "
+                    "engagement. The aggregate is useful for ranking overall activity, but "
+                    "it is not presented as a validated psychological scale."
+                ),
+                (
+                    "The difference between exposure and response is also fundamental. "
+                    "An engagement rate normally requires a denominator such as reach, "
+                    "impressions, followers, or unique viewers. None is available in the "
+                    "source file. Dividing observed actions by an invented or inappropriate "
+                    "denominator would create false precision, so the project reports "
+                    "counts, composition ratios, and within-dataset comparisons instead. "
+                    "This constraint narrows the claims but improves their validity. It "
+                    "also explains why a post with many engagements cannot automatically "
+                    "be described as efficient: the number of people who had an opportunity "
+                    "to engage is unknown."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "7.2 Evidence standards and reproducible design",
+            [
+                (
+                    "The workflow follows a separation between source evidence, derived "
+                    "evidence, and presentation. The raw CSV is preserved and identified "
+                    "by SHA-256. Cleaning rules operate on a copy and produce an auditable "
+                    "processed table. Calculated statistics and graph metrics are then "
+                    "serialized in one machine-readable summary. Reports, notebook claims, "
+                    "and website text read from that summary instead of maintaining "
+                    "independent handwritten numbers. This design reduces the risk that "
+                    "a corrected metric remains stale in one publication surface. It also "
+                    "makes a discrepancy testable: a reported value can be traced to a "
+                    "specific JSON field and to the function that calculated it."
+                ),
+                (
+                    "Reproducibility is understood as more than the presence of code. "
+                    "Paths are resolved from the repository root, stochastic operations "
+                    "use seed 42, graph parameters are recorded, notebooks are executed "
+                    "from clean kernels, and required artifacts are checked for existence "
+                    "and nontrivial size. The artifact manifest records hashes for the "
+                    "canonical data, tables, figures, interactive files, notebooks, and "
+                    "reports. These measures cannot guarantee that every software version "
+                    "will render pixels identically, but they make the analytical decisions "
+                    "and the delivered version observable and comparable."
+                ),
+                (
+                    "The design also separates regeneration from verification. A pipeline "
+                    "can finish without proving that its outputs are correct, so completion "
+                    "is followed by independent checks: schema assertions, numerical "
+                    "cross-checks, notebook error inspection, document-structure audits, "
+                    "link validation, responsive browser review, and deployment status "
+                    "inspection. Failures are reported at the surface where they occur. "
+                    "For example, an analytical test cannot certify that a dropdown works, "
+                    "and a visual browser check cannot establish that a matrix used the "
+                    "correct edge-weight field. Layered verification prevents one successful "
+                    "tool from being treated as evidence for an unrelated requirement."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "7.3 Data quality assessment and transformation rationale",
+            [
+                (
+                    f"The raw table contains {audit['initial_rows']:,} records and "
+                    f"{audit['initial_columns']} columns. Four columns are empty across "
+                    "all rows and carry no analytical information; removing them is a "
+                    "structural correction rather than an imputation decision. Duplicate "
+                    "checks are performed both on complete rows and on `status_id`, because "
+                    "two identical records and two records sharing an identifier represent "
+                    "different quality concerns. The observed duplicate counts are "
+                    f"{audit['duplicate_rows_removed']} complete rows and "
+                    f"{audit['duplicate_ids_removed']} identifiers. Date parsing is "
+                    "validated before temporal features are produced, preventing malformed "
+                    "timestamps from silently entering hourly or monthly summaries."
+                ),
+                (
+                    "Count variables are required to be numeric, finite, and nonnegative. "
+                    "Categorical labels are normalized so that spelling or capitalization "
+                    "does not split a post type into artificial groups. Missing-value "
+                    "handling is deliberately conservative: imputation is applied only "
+                    "where a defensible zero interpretation exists, and the audit records "
+                    "the number of affected values. The processed table is then validated "
+                    "against explicit invariants, including unique identifiers, complete "
+                    "engineered columns, nonnegative engagement, and finite ratios. These "
+                    "checks convert assumptions into executable conditions rather than "
+                    "leaving them as undocumented analyst judgment."
+                ),
+                (
+                    f"Extreme engagement is retained. The upper Tukey fence is "
+                    f"{audit['outlier_threshold']:,.2f}, and {audit['outlier_count']:,} "
+                    "records exceed it. Deleting these observations would remove genuine "
+                    "high-performing posts and materially change the phenomenon under "
+                    "study. Instead, an outlier flag supports sensitivity-aware summaries, "
+                    "while log transformation makes distribution plots readable. Mean "
+                    "and median are reported together so that the influence of the long "
+                    "right tail remains visible."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "7.4 Feature validity and analytical interpretation",
+            [
+                (
+                    "Total engagement is defined as the sum of the dataset's authoritative "
+                    "reaction total, comments, and shares. Component reaction fields are "
+                    "retained for composition analysis and quality comparison, but they "
+                    "do not replace the documented total without evidence that the two "
+                    "constructs are identical. The comment-to-reaction and share-to-total "
+                    "ratios are calculated with a zero-safe operation. Returning zero when "
+                    "the denominator is zero avoids infinite values and preserves a clear "
+                    "interpretation: no observed denominator-supported ratio is available "
+                    "for that row."
+                ),
+                (
+                    "Temporal features translate timestamps into posting hour, weekday, "
+                    "month, ISO week, weekend status, and broad time-of-day categories. "
+                    "They describe when posts were published, not when engagement occurred. "
+                    "A high median for a posting hour may reflect content selection, seller "
+                    "strategy, seasonal campaigns, or audience composition. The feature "
+                    "therefore supports descriptive scheduling analysis but not a causal "
+                    "recommendation that changing the clock time alone will improve results."
+                ),
+                (
+                    "The low, medium, and high engagement bands are rank-based descriptive "
+                    "labels within this dataset. They are not universal performance "
+                    "benchmarks and should not be compared directly with another page or "
+                    "platform without recalibration. Similarly, the outlier indicator is "
+                    "a statistical flag rather than a judgment that a record is erroneous. "
+                    "These labels are useful for filtering and visual explanation only "
+                    "when their local definition remains visible."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "7.5 Distribution-aware exploratory strategy",
+            [
+                (
+                    f"The {engagement['rows']:,} posts record "
+                    f"{engagement['total_engagement']:,} total engagements. The mean "
+                    f"({engagement['mean_engagement']:,.2f}) is substantially larger than "
+                    f"the median ({engagement['median_engagement']:,.2f}), demonstrating "
+                    "that a small proportion of posts contributes heavily to the aggregate. "
+                    "A mean-only comparison would therefore describe the economic weight "
+                    "of high observations but not the typical post. The report pairs means "
+                    "with medians, count distributions, and log-scaled views so that both "
+                    "questions remain answerable."
+                ),
+                (
+                    "Post-type comparisons are observational. Video has the highest "
+                    f"observed mean total engagement ({engagement['top_post_type_mean_engagement']:,.2f}), "
+                    "but post type was not randomized. Seller identity, live-event context, "
+                    "promotion, topic, audience size, and the platform's historical ranking "
+                    "system may all affect the result. The finding is appropriately phrased "
+                    "as an association in the recorded sample. It can motivate a controlled "
+                    "content experiment, but it cannot substitute for one."
+                ),
+                (
+                    "Spearman correlation is selected because it evaluates monotonic rank "
+                    "association without assuming normally distributed raw counts. Total "
+                    "engagement necessarily shares components with reactions, comments, "
+                    "and shares, so strong correlations with the total are partly "
+                    "mathematical. Correlation between components may also arise from a "
+                    "common exposure mechanism. The heatmap is therefore interpreted as "
+                    "a descriptive relationship map, not as evidence that one action causes "
+                    "another."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "7.6 Graph representation and metric semantics",
+            [
+                (
+                    "A graph is defined by its nodes, edges, direction, and attributes; "
+                    "the drawing is only one representation of that structure. Adjacency "
+                    "lists are efficient for neighbor inspection in sparse graphs, while "
+                    "matrices support exact pairwise lookup, linear-algebra operations, "
+                    "and symmetry tests. Node-link diagrams are effective for paths, hubs, "
+                    "bridges, and small-scale topology, but they become difficult to read "
+                    "as density and label count increase. The exercises use each form for "
+                    "the task it supports rather than treating visualization as decoration."
+                ),
+                (
+                    "Metric meaning depends on the graph model. Degree counts incident "
+                    "ties, in-degree counts received directed ties, and PageRank distributes "
+                    "importance through linked neighbors. Betweenness identifies nodes on "
+                    "shortest paths, but weighted shortest paths require a distance. In the "
+                    "knowledge graph, semantic strength is transformed to inverse strength "
+                    "so that a strong relationship becomes a short effective distance. "
+                    "Using raw strength directly as distance would reverse the intended "
+                    "meaning and could change the ranking."
+                ),
+                (
+                    "Connectivity also controls path interpretation. Average shortest path "
+                    "is undefined across disconnected components because no finite route "
+                    "joins every pair. The model comparison therefore reports whole-graph "
+                    "path length only for connected graphs and uses the largest connected "
+                    "component for the disconnected Erdos-Renyi realization. The scope is "
+                    "stored beside the value so that a reader cannot mistake the component "
+                    "result for a network-wide statistic."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "7.7 Visual encoding and layout validity",
+            [
+                (
+                    "Layout algorithms change coordinates, not topology. A spring layout "
+                    "uses attractive and repulsive forces, Kamada-Kawai minimizes a "
+                    "graph-distance stress objective, spectral layout uses eigenvectors, "
+                    "and circular, shell, or random placement applies different geometric "
+                    "constraints. Because the same graph can look clustered or dispersed "
+                    "under different coordinates, visual grouping must be checked against "
+                    "calculated community or clustering measures. In Exercise 2, node "
+                    "attributes, sizes, edge styles, labels, and figure dimensions are "
+                    "held constant so that placement is the controlled variable."
+                ),
+                (
+                    f"The supplied `G_ppi` realization has average clustering "
+                    f"{exercises['exercise_2']['average_clustering']:.3f}. Kamada-Kawai "
+                    "is selected because it gives the clearest distance-oriented account "
+                    "of ring locality and shortcuts, not because it reveals communities "
+                    "that the metric does not support. This distinction is important in "
+                    "academic graph drawing: an aesthetically separated region may be a "
+                    "layout artifact, while a visually dense region may reflect label "
+                    "placement rather than structural cohesion."
+                ),
+                (
+                    "Color, size, shape, and width are assigned specific semantic roles. "
+                    "Categorical variables use distinct hues; ordered measures use a "
+                    "continuous scale; student and course partitions use separate node "
+                    "forms; and synthetic edge weight is encoded through width. Legends, "
+                    "captions, and hover text state these mappings. Redundant visual cues "
+                    "are used where they improve accessibility, while unnecessary three-"
+                    "dimensional effects and decorative encodings are avoided."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "7.8 Static and interactive visualization roles",
+            [
+                (
+                    "Static figures provide a stable scholarly record. They can be "
+                    "numbered, cited, printed, and compared without requiring a runtime. "
+                    "They are exported at high resolution with explicit titles, labels, "
+                    "legends, and captions. Interactive Plotly artifacts answer different "
+                    "needs: readers can inspect individual nodes and posts, zoom into the "
+                    "long tail, isolate categories, and switch encodings. The project "
+                    "therefore treats interactivity as an analytical affordance rather "
+                    "than a replacement for documented static evidence."
+                ),
+                (
+                    "The node-color dashboard illustrates controlled interaction. Both "
+                    "modes retain the same coordinates and edge traces. Interest-group "
+                    "color is categorical, whereas in-degree color is continuous. Because "
+                    "geometry remains fixed, changes in perception can be attributed to "
+                    "the selected color variable rather than a simultaneous layout change. "
+                    "Hover fields disclose group, in-degree, and out-degree, enabling the "
+                    "reader to check the visual impression against exact values."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "12.1 Critical synthesis of empirical and synthetic evidence",
+            [
+                (
+                    "The project contains two related but noninterchangeable forms of "
+                    "evidence. The Facebook analysis is empirical at the post level: rows "
+                    "are observed records and calculated values describe that sample. The "
+                    "network exercises are synthetic demonstrations of graph construction, "
+                    "measurement, and visual encoding. Their reproducibility does not make "
+                    "them empirical claims about Facebook users, students, transport, "
+                    "proteins, or research communities. Maintaining this boundary protects "
+                    "the report from a visually persuasive but unsupported narrative."
+                ),
+                (
+                    "Taken together, the components show why data visualization requires "
+                    "both numerical and perceptual validation. A distribution plot explains "
+                    "why the mean and median differ; a matrix test verifies a symmetry that "
+                    "a node-link drawing merely suggests; clustering corrects an overly "
+                    "enthusiastic visual reading of layout; and a fixed-coordinate dropdown "
+                    "isolates the effect of color. Each major interpretation is therefore "
+                    "paired with a calculated value, controlled encoding, or explicit "
+                    "limitation."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "12.2 Generalizability and uncertainty",
+            [
+                (
+                    "External validity is limited by time, geography, industry, and platform "
+                    "context. The posts end in 2018 and originate from ten Thai fashion "
+                    "and cosmetics sellers. Facebook interfaces, ranking systems, audience "
+                    "behavior, and commercial practices have changed since collection. "
+                    "Results should therefore be read as a careful description of this "
+                    "dataset, not as a current global benchmark for social-media strategy."
+                ),
+                (
+                    "The graph-model comparison is also conditional. Metrics from one "
+                    "30-node seeded realization are exact for that realization but uncertain "
+                    "as estimates of a model's typical behavior. A stronger simulation "
+                    "study would repeat each parameter set across many seeds, summarize "
+                    "the metric distributions, and report confidence or percentile "
+                    "intervals. Parameter sweeps could then separate a mechanism's general "
+                    "tendency from a particular random draw."
+                ),
+                (
+                    "Sensitivity analysis would also strengthen the empirical component. "
+                    "Post-type rankings could be recalculated after winsorization, within "
+                    "time periods, or with seller-level controls if stable page identifiers "
+                    "became available. Median and quantile regression could describe "
+                    "different parts of the engagement distribution without allowing the "
+                    "largest posts to dominate. Missing exposure denominators remain the "
+                    "most important obstacle: no transformation of the current counts can "
+                    "recover the unobserved population that saw each post. Future inference "
+                    "should therefore improve data collection before increasing model "
+                    "complexity."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "12.3 Ethical, privacy, and academic-integrity safeguards",
+            [
+                (
+                    "The source is anonymized and contains no post text, account names, or "
+                    "direct personal identifiers. The project does not attempt linkage, "
+                    "re-identification, or inference about protected characteristics. "
+                    "Aggregated reporting further reduces exposure. Synthetic people and "
+                    "relationships are labeled as such in data files, figures, notebooks, "
+                    "the website, and the report. These labels are not cosmetic: they "
+                    "prevent readers from confusing pedagogical structures with observed "
+                    "human behavior."
+                ),
+                (
+                    "Academic integrity is supported through source attribution, explicit "
+                    "acquisition history, calculated rather than fabricated statistics, "
+                    "and reproducible code. The UCI dataset and its accompanying article "
+                    "are cited, software tools are acknowledged, and the unlicensed "
+                    "teaching package is not republished. The report distinguishes a "
+                    "Kaggle mirror from the actual UCI acquisition route and does not claim "
+                    "that credentials or an API were used when they were unavailable."
+                ),
+                (
+                    "Accessibility is treated as an ethical property of communication. "
+                    "Figures use descriptive captions and alternative text; tables identify "
+                    "header rows; keyboard focus remains visible; and color is accompanied "
+                    "by labels, shape, position, or downloadable values when feasible. "
+                    "Interactive frames retain meaningful titles, while static equivalents "
+                    "preserve the central result for readers who cannot or prefer not to "
+                    "operate a dynamic chart. These measures do not constitute a complete "
+                    "accessibility certification, but they reduce avoidable barriers and "
+                    "make the evidential content less dependent on a single sensory channel."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "12.4 Practical recommendations",
+            [
+                (
+                    "For applied content analysis, future data collection should prioritize "
+                    "reach and impression denominators, stable page identifiers, content "
+                    "metadata, and campaign context. These variables would permit rate "
+                    "estimation, multilevel seller comparisons, and adjustment for exposure. "
+                    "A prospective design could rotate content formats or posting windows "
+                    "under controlled conditions. Until such evidence exists, video should "
+                    "be described as the highest-engagement observed category rather than "
+                    "a guaranteed intervention."
+                ),
+                (
+                    "For network analysis, repeated simulations should precede general "
+                    "claims about model behavior. Community detection should be calculated "
+                    "independently of layout, and weighted metrics should document whether "
+                    "an edge attribute represents strength, capacity, probability, cost, "
+                    "or distance. Interactive views should preserve a stable reference "
+                    "state when comparing visual variables and should expose exact values "
+                    "through accessible text or downloadable tables."
+                ),
+                (
+                    "For project maintenance, the canonical summary and artifact manifest "
+                    "should remain the only numerical publication interfaces. Changes to "
+                    "cleaning, graph parameters, or metric definitions should trigger the "
+                    "complete pipeline, notebook execution, report generation, website "
+                    "build, and cross-surface tests. A published release should be tied "
+                    "to a commit SHA so that the local project, repository, Pages artifact, "
+                    "and secondary deployment can be compared unambiguously."
+                ),
+                (
+                    "For teaching and assessment, each exercise should remain inspectable "
+                    "at three levels. The notebook shows how the calculation unfolds, the "
+                    "standalone source module shows reusable implementation, and the website "
+                    "connects code to output and interpretation. This layered presentation "
+                    "supports readers with different technical backgrounds while preserving "
+                    "one analytical result. Assessment should reward the justification of "
+                    "a representation and the accuracy of its limitation, not only the "
+                    "presence of an attractive graph."
+                ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "12.5 Integrated design framework",
+            [
+                (
+                    "The project adopts a question-first visualization framework. The "
+                    "empirical questions concern differences in recorded engagement across "
+                    "post types and time; the exercise questions concern graph structure, "
+                    "layout, weighting, and interaction. Those question classes require "
+                    "different evidence. Comparisons use aligned bars and tables, skewed "
+                    "outcomes use distributions and robust summaries, pairwise monotonic "
+                    "association uses a rank-correlation matrix, and network questions use "
+                    "matrices, node-link views, and calculated graph metrics. Selecting a "
+                    "representation from the analytical task prevents decorative novelty "
+                    "from becoming the governing design criterion."
+                ),
+                (
+                    "Network science also distinguishes structure from its visual "
+                    "realization. Barabasi (2016) treats degree distributions, clustering, "
+                    "paths, and generative mechanisms as properties of graphs rather than "
+                    "of drawings. This report follows that distinction by calculating "
+                    "metrics with NetworkX and using layouts only to expose selected "
+                    "relationships. Hagberg, Schult, and Swart (2008) describe NetworkX as "
+                    "a platform for structural analysis; its role here is therefore "
+                    "computational, while Matplotlib and Plotly provide complementary "
+                    "static and interactive presentations. Recalculating metrics before "
+                    "rendering keeps visual appearance subordinate to the stored graph."
+                ),
+                (
+                    "The empirical component is similarly anchored in provenance. Dehouche "
+                    "(2018, 2020) documents the Facebook Live Sellers in Thailand data and "
+                    "its engagement variables. The present study retains that observational "
+                    "unit and does not reinterpret posts as users or infer social ties. It "
+                    "adds reproducible cleaning, feature definitions, descriptive analysis, "
+                    "and visual communication, but it does not enlarge the evidential scope "
+                    "of the source. This source-to-claim traceability is especially important "
+                    "when a project combines a real table with synthetic graph exercises: "
+                    "the common software environment must not be mistaken for a common "
+                    "population or a shared causal design."
+                ),
+                (
+                    "Finally, the communication design recognizes that reproducibility is "
+                    "both technical and rhetorical. A fixed seed and checksum reproduce an "
+                    "artifact, but a reader also needs definitions, captions, limitations, "
+                    "and accessible alternatives to understand what that artifact supports. "
+                    "The notebooks expose calculations, the report supplies sustained "
+                    "argument, the website supports navigation and interaction, and the "
+                    "machine-readable summary binds their numerical claims. Agreement among "
+                    "these layers is tested rather than assumed. The resulting architecture "
+                    "makes revision auditable: a change to a statistic must propagate from "
+                    "the canonical JSON through every presentation surface or cause a "
+                    "contract test to fail."
+                ),
+            ],
+            None,
+            None,
+        ),
+    ]
+
+
+def _sections_as_markdown(
+    sections: list[tuple[str, list[str], None, None]],
+) -> str:
+    return "\n\n".join(
+        f"### {title}\n\n" + "\n\n".join(paragraphs)
+        for title, paragraphs, _, _ in sections
+    )
+
+
 def build_markdown(summary: dict[str, Any]) -> str:
     """Create a complete academic report in Markdown from calculated results."""
 
@@ -389,12 +904,18 @@ def build_markdown(summary: dict[str, Any]) -> str:
     )
     report = f"""# Visual Analytics and Network Analysis of Facebook Engagement Using Python
 
-**Student:** {STUDENT['name']}  
-**Student ID:** {STUDENT['id']}  
-**Course:** {STUDENT['course_name']} ({STUDENT['course_code']})  
-**Semester:** {STUDENT['semester']}  
-**Teacher:** {STUDENT['teacher']}, {STUDENT['designation']}  
-**Department:** {STUDENT['department']}  
+**Student:** {STUDENT['name']}
+
+**Student ID:** {STUDENT['id']}
+
+**Course:** {STUDENT['course_name']} ({STUDENT['course_code']})
+
+**Semester:** {STUDENT['semester']}
+
+**Teacher:** {STUDENT['teacher']}, {STUDENT['designation']}
+
+**Department:** {STUDENT['department']}
+
 **University:** {STUDENT['university']}
 
 ## Abstract
@@ -402,6 +923,22 @@ def build_markdown(summary: dict[str, Any]) -> str:
 An analysis is presented of {engagement['rows']:,} anonymized Facebook posts from ten Thai fashion and cosmetics sellers, and the supplied graph-visualization teaching material is extended through seven reproducible exercises. Data cleaning, feature engineering, exploratory visualization, graph representations, layout comparison, bipartite modeling, weighted encoding, generative-model statistics, and interactive Plotly networks are combined. A total of {engagement['total_reactions']:,} reactions, {engagement['total_comments']:,} comments, and {engagement['total_shares']:,} shares is recorded. The largest mean total engagement is observed for {engagement['top_post_type_by_mean_engagement']} posts ({engagement['top_post_type_mean_engagement']:,.2f}), although a causal claim is not supported by the observational design. Symmetry is verified in the weighted `G_transport` adjacency matrix, while a trade-off is revealed by the model comparison: clustering and short paths are captured by Watts-Strogatz, whereas hubs and degree heterogeneity are captured by Barabasi-Albert. A reproducible academic artifact is produced with static figures, interactive HTML, executable notebooks, a responsive website, automated tests, and machine-readable analytical outputs.
 
 **Keywords:** Facebook engagement, data visualization, social-network analysis, NetworkX, Plotly, graph layout, Python
+
+## Contents
+
+1. Introduction and research questions
+2. Dataset and provenance
+3. Tools and reproducibility
+4. Data-cleaning methodology
+5. Feature engineering
+6. Exploratory data analysis
+7. Graph representation, visualization, and evidence framework
+8. Seven mandatory network exercises
+9. Discussion
+10. Limitations and ethical considerations
+11. Conclusion and recommendations
+12. Future work and critical implications
+References and reproducibility appendices
 
 ## 1. Introduction
 
@@ -429,7 +966,7 @@ Raw engagement counts are highly skewed, post categories are imbalanced, and a t
 
 ## 2. Dataset and provenance
 
-The dataset is **Facebook Live Sellers in Thailand**, authored by Nassim Dehouche and distributed by the UCI Machine Learning Repository under CC BY 4.0 [1]. The raw CSV contains 7,050 rows and 16 columns; four columns are entirely empty placeholders. Posts span {engagement['date_min'][:10]} through {engagement['date_max'][:10]}. The official UCI file was used because Kaggle credentials were not configured; a Kaggle mirror is documented but was not used for acquisition. The original study reports anonymized data collected from ten Thai fashion and cosmetics seller pages [2].
+The dataset is **Facebook Live Sellers in Thailand**, authored by Nassim Dehouche and distributed by the UCI Machine Learning Repository under CC BY 4.0 (Dehouche, 2018). The raw CSV contains 7,050 rows and 16 columns; four columns are entirely empty placeholders. Posts span {engagement['date_min'][:10]} through {engagement['date_max'][:10]}. The official UCI file was used because Kaggle credentials were not configured; a Kaggle mirror is documented but was not used for acquisition. The accompanying study reports anonymized data collected from ten Thai fashion and cosmetics seller pages (Dehouche, 2020).
 
 The selection is appropriate because it is medium-sized, includes numerical and categorical engagement variables, contains timestamps, is publicly licensed, and contains no names or message text. Its limitation is equally important: it does not contain reach, impressions, follower counts, page identity, or user-to-user interaction IDs.
 
@@ -593,14 +1130,21 @@ Future work could incorporate content embeddings, causal designs, hierarchical m
 
 ## References
 
-1. Dehouche, N. (2018). *Facebook Live Sellers in Thailand* [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5R60S
-2. Dehouche, N. (2020). Dataset on usage and engagement patterns for Facebook Live sellers in Thailand. *Data in Brief, 30*, 105661. https://doi.org/10.1016/j.dib.2020.105661
-3. Hagberg, A. A., Schult, D. A., & Swart, P. J. (2008). Exploring network structure, dynamics, and function using NetworkX. *Proceedings of SciPy 2008*, 11–15.
-4. Barabasi, A.-L. (2016). *Network Science*. Cambridge University Press. http://networksciencebook.com/
-5. Pandas documentation. https://pandas.pydata.org/docs/
-6. Matplotlib documentation. https://matplotlib.org/stable/
-7. Plotly Python documentation. https://plotly.com/python/
-8. NetworkX documentation. https://networkx.org/documentation/stable/
+Barabasi, A.-L. (2016). *Network science*. Cambridge University Press. http://networksciencebook.com/
+
+Dehouche, N. (2018). *Facebook Live Sellers in Thailand* [Data set]. UCI Machine Learning Repository. https://doi.org/10.24432/C5R60S
+
+Dehouche, N. (2020). Dataset on usage and engagement patterns for Facebook Live sellers in Thailand. *Data in Brief, 30*, 105661. https://doi.org/10.1016/j.dib.2020.105661
+
+Hagberg, A. A., Schult, D. A., & Swart, P. J. (2008). Exploring network structure, dynamics, and function using NetworkX. *Proceedings of the 7th Python in Science Conference*, 11–15.
+
+Matplotlib Development Team. (2026). *Matplotlib documentation*. https://matplotlib.org/stable/
+
+NetworkX Developers. (2026). *NetworkX documentation*. https://networkx.org/documentation/stable/
+
+pandas development team. (2026). *pandas documentation*. https://pandas.pydata.org/docs/
+
+Plotly Technologies Inc. (2026). *Plotly Python documentation*. https://plotly.com/python/
 
 ## Appendix A. Reproducibility and output map
 
@@ -610,12 +1154,22 @@ Run `python main.py` to rebuild processed data, analytical tables, figures, inte
 
 The supplied teaching notebooks contain source-identical graph definitions. Exercise 2 uses Kamada-Kawai as the preferred layout based on this exact realization. The Kaggle API was not used. `num_reactions` is treated as the dataset's authoritative reaction total while component sums are retained as a quality-control comparison.
 """
+    extended = _extended_academic_sections(summary)
+    pre_exercise = [section for section in extended if section[0].startswith("7.")]
+    post_exercise = [section for section in extended if section[0].startswith("12.")]
     before_exercises, remaining = report.split(
         "## 8. Mandatory hands-on network exercises", maxsplit=1
     )
     _, after_exercises = remaining.split("## 9. Discussion", maxsplit=1)
+    after_exercises = after_exercises.replace(
+        "## References",
+        _sections_as_markdown(post_exercise) + "\n\n## References",
+        1,
+    )
     return (
         before_exercises
+        + _sections_as_markdown(pre_exercise)
+        + "\n\n"
         + "## 8. Mandatory hands-on network exercises\n\n"
         + _exercise_markdown(summary).strip()
         + "\n\n## 9. Discussion"
@@ -698,6 +1252,22 @@ def _add_page_number(paragraph) -> None:
     end = OxmlElement("w:fldChar")
     end.set(qn("w:fldCharType"), "end")
     run._r.extend([begin, instruction, separate, text, end])
+
+
+def _normalize_docx_container(path: Path) -> None:
+    """Give DOCX ZIP members fixed timestamps for reproducible hashes."""
+
+    temporary = path.with_suffix(".normalized.docx")
+    with (
+        ZipFile(path) as source,
+        ZipFile(temporary, "w", compression=ZIP_DEFLATED) as destination,
+    ):
+        for original in sorted(source.infolist(), key=lambda item: item.filename):
+            info = copy(original)
+            info.date_time = (2026, 7, 27, 0, 0, 0)
+            info.compress_type = ZIP_DEFLATED
+            destination.writestr(info, source.read(original.filename))
+    temporary.replace(path)
 
 
 def _configure_document(document: Document) -> None:
@@ -844,7 +1414,7 @@ def build_docx(summary: dict[str, Any], path: Path) -> None:
         metadata,
         widths=[1.55, 4.95],
     )
-    document.add_paragraph("\nPrepared: 25 July 2026").alignment = (
+    document.add_paragraph("\nPrepared: 27 July 2026").alignment = (
         WD_ALIGN_PARAGRAPH.CENTER
     )
     document.add_page_break()
@@ -868,20 +1438,21 @@ def build_docx(summary: dict[str, Any], path: Path) -> None:
                 figure_spec[2],
             )
             figure_number += 1
-    document.add_page_break()
     document.add_heading("References", level=1)
     references = [
-        "Dehouche, N. (2018). Facebook Live Sellers in Thailand [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5R60S",
+        "Barabasi, A.-L. (2016). Network science. Cambridge University Press. http://networksciencebook.com/",
+        "Dehouche, N. (2018). Facebook Live Sellers in Thailand [Data set]. UCI Machine Learning Repository. https://doi.org/10.24432/C5R60S",
         "Dehouche, N. (2020). Dataset on usage and engagement patterns for Facebook Live sellers in Thailand. Data in Brief, 30, 105661. https://doi.org/10.1016/j.dib.2020.105661",
-        "Hagberg, A. A., Schult, D. A., & Swart, P. J. (2008). Exploring network structure, dynamics, and function using NetworkX. Proceedings of SciPy 2008, 11-15.",
-        "Barabasi, A.-L. (2016). Network Science. Cambridge University Press. http://networksciencebook.com/",
-        "Pandas documentation. https://pandas.pydata.org/docs/",
-        "Matplotlib documentation. https://matplotlib.org/stable/",
-        "Plotly Python documentation. https://plotly.com/python/",
-        "NetworkX documentation. https://networkx.org/documentation/stable/",
+        "Hagberg, A. A., Schult, D. A., & Swart, P. J. (2008). Exploring network structure, dynamics, and function using NetworkX. Proceedings of the 7th Python in Science Conference, 11-15.",
+        "Matplotlib Development Team. (2026). Matplotlib documentation. https://matplotlib.org/stable/",
+        "NetworkX Developers. (2026). NetworkX documentation. https://networkx.org/documentation/stable/",
+        "pandas development team. (2026). pandas documentation. https://pandas.pydata.org/docs/",
+        "Plotly Technologies Inc. (2026). Plotly Python documentation. https://plotly.com/python/",
     ]
     for reference in references:
-        document.add_paragraph(reference, style="List Number")
+        paragraph = document.add_paragraph(reference)
+        paragraph.paragraph_format.left_indent = Inches(0.25)
+        paragraph.paragraph_format.first_line_indent = Inches(-0.25)
     document.add_heading("Appendix: Reproducibility and assumptions", level=1)
     document.add_paragraph(
         "Run python main.py to rebuild every generated artifact and pytest to validate "
@@ -895,6 +1466,7 @@ def build_docx(summary: dict[str, Any], path: Path) -> None:
     document.core_properties.author = STUDENT["name"]
     document.core_properties.subject = f"{STUDENT['course_code']} academic project"
     document.save(path)
+    _normalize_docx_container(path)
 
 
 def _exercise_docx_sections(
@@ -948,7 +1520,7 @@ def _exercise_docx_sections(
         f"{row['user']} ({row['in_degree']})"
         for row in social["highest_in_degree_users"]
     )
-    return [
+    sections = [
         (
             "7. Exercise 1 - Weighted adjacency representations",
             [
@@ -1448,6 +2020,23 @@ def _exercise_docx_sections(
             None,
         ),
     ]
+    normalized = []
+    exercise_number = 0
+    subsection_number = 0
+    for title, paragraphs, table_spec, figure_spec in sections:
+        if "Exercise " in title:
+            exercise_number += 1
+            subsection_number = 0
+            label = title.split(" - ", maxsplit=1)[-1]
+            normalized_title = (
+                f"8.{exercise_number} Exercise {exercise_number} - {label}"
+            )
+        else:
+            subsection_number += 1
+            label = title.split(maxsplit=1)[-1]
+            normalized_title = f"8.{exercise_number}.{subsection_number} {label}"
+        normalized.append((normalized_title, paragraphs, table_spec, figure_spec))
+    return normalized
 
 
 def _docx_sections(
@@ -1498,6 +2087,18 @@ def _docx_sections(
                     "Keywords: Facebook engagement, data visualization, social-network "
                     "analysis, NetworkX, Plotly, Python."
                 ),
+            ],
+            None,
+            None,
+        ),
+        (
+            "Contents",
+            [
+                "1. Introduction and research questions; 2. Dataset, license, and "
+                "ethics; 3. Data cleaning and feature engineering; 4-6. Empirical "
+                "findings and visualization methodology; 7. Extended analytical "
+                "framework; 8. Seven mandatory exercises; 9-12. Discussion, "
+                "limitations, conclusions, implications, references, and appendices."
             ],
             None,
             None,
@@ -1754,7 +2355,7 @@ def _docx_sections(
             ),
         ),
         (
-            "14. Discussion",
+            "9. Discussion",
             [
                 "The empirical and synthetic components answer different questions. The "
                 "Facebook table supports descriptive post comparison but not individual "
@@ -1768,7 +2369,7 @@ def _docx_sections(
             None,
         ),
         (
-            "15. Limitations and ethical considerations",
+            "10. Limitations and ethical considerations",
             [
                 "The data end in 2018, represent ten Thai sellers, and omit reach, "
                 "impressions, followers, campaign spend, page identity, and content text. "
@@ -1781,7 +2382,7 @@ def _docx_sections(
             None,
         ),
         (
-            "16. Conclusion, recommendations, and future work",
+            "11. Conclusion, recommendations, and future work",
             [
                 "The largest observed mean engagement was associated with video posts. "
                 "The supplied small-world graph was presented most clearly by "
@@ -1805,12 +2406,17 @@ def _docx_sections(
     discussion = next(
         index
         for index, section in enumerate(sections)
-        if section[0].startswith("14. Discussion")
+        if section[0].startswith("9. Discussion")
     )
+    extended = _extended_academic_sections(summary)
+    pre_exercise = [section for section in extended if section[0].startswith("7.")]
+    post_exercise = [section for section in extended if section[0].startswith("12.")]
     return (
         sections[:first_exercise]
+        + pre_exercise
         + _exercise_docx_sections(summary)
         + sections[discussion:]
+        + post_exercise
     )
 
 
@@ -1902,17 +2508,16 @@ def build_pdf(summary: dict[str, Any], path: Path) -> None:
                 )
             )
             figure_number += 1
-    story.append(PageBreak())
     story.append(Paragraph("References", styles["Heading1"]))
     references = [
-        "1. Dehouche, N. (2018). Facebook Live Sellers in Thailand [Dataset]. UCI Machine Learning Repository. https://doi.org/10.24432/C5R60S",
-        "2. Dehouche, N. (2020). Dataset on usage and engagement patterns for Facebook Live sellers in Thailand. Data in Brief, 30, 105661. https://doi.org/10.1016/j.dib.2020.105661",
-        "3. Hagberg, A. A., Schult, D. A., & Swart, P. J. (2008). Exploring network structure, dynamics, and function using NetworkX. Proceedings of SciPy 2008, 11-15.",
-        "4. Barabasi, A.-L. (2016). Network Science. Cambridge University Press. http://networksciencebook.com/",
-        "5. Pandas documentation. https://pandas.pydata.org/docs/",
-        "6. Matplotlib documentation. https://matplotlib.org/stable/",
-        "7. Plotly Python documentation. https://plotly.com/python/",
-        "8. NetworkX documentation. https://networkx.org/documentation/stable/",
+        "Barabasi, A.-L. (2016). Network science. Cambridge University Press. http://networksciencebook.com/",
+        "Dehouche, N. (2018). Facebook Live Sellers in Thailand [Data set]. UCI Machine Learning Repository. https://doi.org/10.24432/C5R60S",
+        "Dehouche, N. (2020). Dataset on usage and engagement patterns for Facebook Live sellers in Thailand. Data in Brief, 30, 105661. https://doi.org/10.1016/j.dib.2020.105661",
+        "Hagberg, A. A., Schult, D. A., & Swart, P. J. (2008). Exploring network structure, dynamics, and function using NetworkX. Proceedings of the 7th Python in Science Conference, 11-15.",
+        "Matplotlib Development Team. (2026). Matplotlib documentation. https://matplotlib.org/stable/",
+        "NetworkX Developers. (2026). NetworkX documentation. https://networkx.org/documentation/stable/",
+        "pandas development team. (2026). pandas documentation. https://pandas.pydata.org/docs/",
+        "Plotly Technologies Inc. (2026). Plotly Python documentation. https://plotly.com/python/",
     ]
     for reference in references:
         story.append(Paragraph(reference, styles["BodyText"]))

@@ -1,0 +1,575 @@
+{
+  "project_title": "Visual Analytics and Network Analysis of Facebook Engagement Using Python",
+  "student": {
+    "name": "S. M. Monowar Kayser",
+    "id": "253-25-019",
+    "course_name": "Data Visualization",
+    "course_code": "CSE628",
+    "semester": "Summer 2026",
+    "teacher": "Sadat Hasan",
+    "designation": "Adjunct Faculty",
+    "department": "Department of Computer Science and Engineering",
+    "university": "Daffodil International University"
+  },
+  "dataset": {
+    "title": "Facebook Live Sellers in Thailand",
+    "author": "Nassim Dehouche",
+    "publisher": "UCI Machine Learning Repository",
+    "doi": "10.24432/C5R60S",
+    "official_url": "https://archive.ics.uci.edu/dataset/488/facebook%2Blive%2Bsellers%2Bin%2Bthailand",
+    "kaggle_mirror": "https://www.kaggle.com/datasets/ashishg21/facebook-live-sellers-in-thailand-uci-ml-repo",
+    "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+    "download_date": "2026-07-25",
+    "file_format": "CSV",
+    "raw_sha256": "ea6a31aab095b15d3fd0c24a63d5d59822f1dd34922b09295179ea9c464a8d5b",
+    "acquisition": "Downloaded from the official UCI repository because Kaggle API credentials were not configured. The Kaggle mirror is documented for discoverability; it was not used for acquisition.",
+    "raw_rows": 7050,
+    "raw_columns": 16,
+    "processed_rows": 7050,
+    "processed_columns": 27
+  },
+  "runtime": {
+    "python": "3.12.13",
+    "seed": 42
+  },
+  "data_cleaning": {
+    "initial_rows": 7050,
+    "initial_columns": 16,
+    "empty_columns_removed": [
+      "Column1",
+      "Column2",
+      "Column3",
+      "Column4"
+    ],
+    "duplicate_rows_removed": 0,
+    "duplicate_ids_removed": 0,
+    "numeric_missing_values_imputed": 0,
+    "invalid_dates_removed": 0,
+    "final_rows": 7050,
+    "final_columns": 27,
+    "outlier_method": "Upper Tukey fence on total_engagement",
+    "outlier_threshold": 1019.0,
+    "outlier_count": 972,
+    "reaction_gap_nonzero_rows": 9
+  },
+  "engagement": {
+    "rows": 7050,
+    "columns": 27,
+    "date_min": "2012-07-15T02:51:00",
+    "date_max": "2018-06-13T01:12:00",
+    "total_reactions": 1622326,
+    "total_comments": 1581710,
+    "total_shares": 282159,
+    "total_engagement": 3486195,
+    "median_engagement": 69.0,
+    "mean_engagement": 494.4957446808511,
+    "outlier_count": 972,
+    "post_type_counts": {
+      "photo": 4288,
+      "video": 2334,
+      "status": 365,
+      "link": 63
+    },
+    "by_type": [
+      {
+        "status_type": "video",
+        "posts": 2334,
+        "mean_reactions": 283.41,
+        "median_reactions": 160.0,
+        "mean_comments": 642.478,
+        "mean_shares": 115.68,
+        "mean_total_engagement": 1041.568,
+        "median_total_engagement": 458.0
+      },
+      {
+        "status_type": "status",
+        "posts": 365,
+        "mean_reactions": 438.784,
+        "median_reactions": 120.0,
+        "mean_comments": 36.238,
+        "mean_shares": 2.559,
+        "mean_total_engagement": 477.581,
+        "median_total_engagement": 141.0
+      },
+      {
+        "status_type": "link",
+        "posts": 63,
+        "mean_reactions": 370.143,
+        "median_reactions": 50.0,
+        "mean_comments": 5.698,
+        "mean_shares": 4.397,
+        "mean_total_engagement": 380.238,
+        "median_total_engagement": 53.0
+      },
+      {
+        "status_type": "photo",
+        "posts": 4288,
+        "mean_reactions": 181.29,
+        "median_reactions": 34.0,
+        "mean_comments": 15.993,
+        "mean_shares": 2.554,
+        "mean_total_engagement": 199.838,
+        "median_total_engagement": 40.0
+      }
+    ],
+    "spearman_correlations": {
+      "num_reactions": {
+        "num_reactions": 1.0,
+        "num_comments": 0.7317,
+        "num_shares": 0.5578,
+        "total_engagement": 0.9681
+      },
+      "num_comments": {
+        "num_reactions": 0.7317,
+        "num_comments": 1.0,
+        "num_shares": 0.6242,
+        "total_engagement": 0.8273
+      },
+      "num_shares": {
+        "num_reactions": 0.5578,
+        "num_comments": 0.6242,
+        "num_shares": 1.0,
+        "total_engagement": 0.6622
+      },
+      "total_engagement": {
+        "num_reactions": 0.9681,
+        "num_comments": 0.8273,
+        "num_shares": 0.6622,
+        "total_engagement": 1.0
+      }
+    },
+    "top_posts": [
+      {
+        "status_id": 499,
+        "status_type": "video",
+        "status_published": "2016-11-30 08:46:00",
+        "num_reactions": 564,
+        "num_comments": 20990,
+        "num_shares": 154,
+        "total_engagement": 21708
+      },
+      {
+        "status_id": 481,
+        "status_type": "video",
+        "status_published": "2016-12-09 21:48:00",
+        "num_reactions": 452,
+        "num_comments": 19013,
+        "num_shares": 161,
+        "total_engagement": 19626
+      },
+      {
+        "status_id": 6758,
+        "status_type": "video",
+        "status_published": "2017-09-25 10:35:00",
+        "num_reactions": 708,
+        "num_comments": 17404,
+        "num_shares": 913,
+        "total_engagement": 19025
+      },
+      {
+        "status_id": 3247,
+        "status_type": "video",
+        "status_published": "2018-01-08 01:10:00",
+        "num_reactions": 624,
+        "num_comments": 12003,
+        "num_shares": 856,
+        "total_engagement": 13483
+      },
+      {
+        "status_id": 6763,
+        "status_type": "video",
+        "status_published": "2017-09-21 08:01:00",
+        "num_reactions": 634,
+        "num_comments": 10960,
+        "num_shares": 783,
+        "total_engagement": 12377
+      },
+      {
+        "status_id": 3893,
+        "status_type": "video",
+        "status_published": "2018-05-09 08:17:00",
+        "num_reactions": 1078,
+        "num_comments": 9452,
+        "num_shares": 1379,
+        "total_engagement": 11909
+      },
+      {
+        "status_id": 6800,
+        "status_type": "video",
+        "status_published": "2017-09-09 10:05:00",
+        "num_reactions": 553,
+        "num_comments": 10926,
+        "num_shares": 429,
+        "total_engagement": 11908
+      },
+      {
+        "status_id": 6449,
+        "status_type": "video",
+        "status_published": "2018-02-27 10:29:00",
+        "num_reactions": 576,
+        "num_comments": 10186,
+        "num_shares": 793,
+        "total_engagement": 11555
+      },
+      {
+        "status_id": 6776,
+        "status_type": "video",
+        "status_published": "2017-09-16 10:00:00",
+        "num_reactions": 422,
+        "num_comments": 9831,
+        "num_shares": 592,
+        "total_engagement": 10845
+      },
+      {
+        "status_id": 6660,
+        "status_type": "photo",
+        "status_published": "2017-11-24 02:23:00",
+        "num_reactions": 272,
+        "num_comments": 10194,
+        "num_shares": 25,
+        "total_engagement": 10491
+      }
+    ],
+    "best_median_posting_hour": 18,
+    "best_median_posting_hour_value": 377.0,
+    "top_post_type_by_mean_engagement": "video",
+    "top_post_type_mean_engagement": 1041.568,
+    "note": "No reach or impression denominator exists, so the project does not mislabel total engagement as an engagement rate."
+  },
+  "exercises": {
+    "exercise_1": {
+      "adjacency_list": {
+        "Dhaka": [
+          "Chattogram",
+          "Sylhet",
+          "Khulna",
+          "Rajshahi",
+          "Barishal",
+          "Rangpur"
+        ],
+        "Chattogram": [
+          "Dhaka",
+          "Sylhet"
+        ],
+        "Sylhet": [
+          "Dhaka",
+          "Chattogram"
+        ],
+        "Khulna": [
+          "Dhaka",
+          "Barishal"
+        ],
+        "Rajshahi": [
+          "Dhaka",
+          "Rangpur"
+        ],
+        "Barishal": [
+          "Dhaka",
+          "Khulna"
+        ],
+        "Rangpur": [
+          "Dhaka",
+          "Rajshahi"
+        ]
+      },
+      "matrix_symmetric": true,
+      "node_order": [
+        "Dhaka",
+        "Chattogram",
+        "Sylhet",
+        "Khulna",
+        "Rajshahi",
+        "Barishal",
+        "Rangpur"
+      ],
+      "nodes": 7,
+      "edges": 9,
+      "density": 0.42857142857142855,
+      "weighted_edges": [
+        {
+          "source": "Dhaka",
+          "target": "Chattogram",
+          "distance_km": 264
+        },
+        {
+          "source": "Dhaka",
+          "target": "Sylhet",
+          "distance_km": 247
+        },
+        {
+          "source": "Dhaka",
+          "target": "Khulna",
+          "distance_km": 209
+        },
+        {
+          "source": "Dhaka",
+          "target": "Rajshahi",
+          "distance_km": 256
+        },
+        {
+          "source": "Dhaka",
+          "target": "Barishal",
+          "distance_km": 170
+        },
+        {
+          "source": "Dhaka",
+          "target": "Rangpur",
+          "distance_km": 300
+        },
+        {
+          "source": "Chattogram",
+          "target": "Sylhet",
+          "distance_km": 350
+        },
+        {
+          "source": "Khulna",
+          "target": "Barishal",
+          "distance_km": 130
+        },
+        {
+          "source": "Rajshahi",
+          "target": "Rangpur",
+          "distance_km": 130
+        }
+      ],
+      "total_recorded_distance_km": 2056,
+      "longest_route": {
+        "source": "Chattogram",
+        "target": "Sylhet",
+        "distance_km": 350
+      },
+      "shortest_route": {
+        "source": "Khulna",
+        "target": "Barishal",
+        "distance_km": 130
+      },
+      "highest_degree_city": "Dhaka",
+      "highest_degree": 6,
+      "reason": "Each undirected weighted edge contributes the same weight to cells (u, v) and (v, u), so the matrix equals its transpose. A directed graph or asymmetric directional weights would break this symmetry."
+    },
+    "exercise_2": {
+      "best_layout": "Kamada-Kawai",
+      "justification": "For this exact 15-node realization, Kamada-Kawai minimizes pairwise distance stress and makes the ring-like locality plus rewired shortcuts most legible; spring is a close alternative. The measured average clustering is 0.0, so no layout can reveal triangle-based clustering that is absent from the supplied k=3 realization.",
+      "nodes": 15,
+      "edges": 15,
+      "density": 0.14285714285714285,
+      "connected": true,
+      "average_degree": 2.0,
+      "diameter": 8,
+      "minimum_degree": 1,
+      "maximum_degree": 4,
+      "average_clustering": 0.0
+    },
+    "exercise_3": {
+      "is_bipartite": true,
+      "students": 12,
+      "courses": 6,
+      "enrollments": 40,
+      "most_popular_course": "Data Visualization",
+      "most_popular_course_enrollments": 12,
+      "most_enrolled_student": "Imran Kabir",
+      "most_enrolled_student_courses": 5,
+      "bipartite_density": 0.5555555555555556,
+      "mean_courses_per_student": 3.3333333333333335,
+      "mean_students_per_course": 6.666666666666667,
+      "course_degrees": [
+        {
+          "course": "Data Visualization",
+          "enrollments": 12
+        },
+        {
+          "course": "Machine Learning",
+          "enrollments": 7
+        },
+        {
+          "course": "Social Network Analysis",
+          "enrollments": 6
+        },
+        {
+          "course": "Database Systems",
+          "enrollments": 5
+        },
+        {
+          "course": "Human-Computer Interaction",
+          "enrollments": 5
+        },
+        {
+          "course": "Research Methodology",
+          "enrollments": 5
+        }
+      ],
+      "pattern": "Data Visualization bridges every represented major. Data Science students also concentrate in Machine Learning and Social Network Analysis, while Multimedia Technology students favor Human-Computer Interaction."
+    },
+    "exercise_4": {
+      "nodes": 100,
+      "edges": 196,
+      "minimum_weight": 1,
+      "maximum_weight": 10,
+      "mean_weight": 5.387755102040816,
+      "median_weight": 5.0,
+      "weight_standard_deviation": 2.852255294772122,
+      "total_edge_weight": 1056,
+      "average_degree": 3.92,
+      "maximum_degree": 36,
+      "weight_frequencies": {
+        "1": 16,
+        "2": 26,
+        "3": 18,
+        "4": 25,
+        "5": 20,
+        "6": 18,
+        "7": 17,
+        "8": 14,
+        "9": 25,
+        "10": 17
+      },
+      "interpretation": "Edge width changes which ties appear salient, but seeded random weights are an encoding demonstration. Node centrality and edge weight are related only when the selected centrality definition explicitly uses weights."
+    },
+    "exercise_5": {
+      "records": [
+        {
+          "Model": "Erdos-Renyi G(n,p)",
+          "Nodes": 30,
+          "Edges": 33,
+          "Density": 0.07586206896551724,
+          "Average Degree": 2.2,
+          "Average Clustering": 0.07222222222222222,
+          "Connected": false,
+          "Connected Components": 3,
+          "Average Shortest Path": 3.828042328042328,
+          "Path Length Scope": "largest connected component",
+          "Maximum Degree": 4,
+          "Degree Standard Deviation": 1.1661903789690602,
+          "Social-Network Similarity Notes": "Homogeneous random mixing; limited clustering and no preferential hubs."
+        },
+        {
+          "Model": "Watts-Strogatz small-world",
+          "Nodes": 30,
+          "Edges": 60,
+          "Density": 0.13793103448275862,
+          "Average Degree": 4.0,
+          "Average Clustering": 0.34555555555555556,
+          "Connected": true,
+          "Connected Components": 1,
+          "Average Shortest Path": 2.9839080459770115,
+          "Path Length Scope": "whole graph",
+          "Maximum Degree": 5,
+          "Degree Standard Deviation": 0.6324555320336759,
+          "Social-Network Similarity Notes": "High local clustering and short paths, but comparatively narrow degrees."
+        },
+        {
+          "Model": "Barabasi-Albert scale-free",
+          "Nodes": 30,
+          "Edges": 56,
+          "Density": 0.12873563218390804,
+          "Average Degree": 3.7333333333333334,
+          "Average Clustering": 0.3001960784313725,
+          "Connected": true,
+          "Connected Components": 1,
+          "Average Shortest Path": 2.1816091954022987,
+          "Path Length Scope": "whole graph",
+          "Maximum Degree": 18,
+          "Degree Standard Deviation": 3.5207322470695717,
+          "Social-Network Similarity Notes": "Strong hubs and heterogeneous degrees, but weaker local clustering here."
+        }
+      ],
+      "conclusion": "Watts-Strogatz captures clustering and short paths; Barabasi-Albert captures hubs and heterogeneous degree. A social network can require both properties, so no model is universally best."
+    },
+    "exercise_6": {
+      "nodes": 20,
+      "edges": 52,
+      "dropdown_modes": [
+        "Interest Group",
+        "In-Degree"
+      ],
+      "standalone_html": "visualizations/interactive/network_color_toggle_dashboard.html",
+      "positions_preserved": true,
+      "directed": true,
+      "density": 0.1368421052631579,
+      "mean_in_degree": 2.6,
+      "minimum_in_degree": 1,
+      "maximum_in_degree": 5,
+      "minimum_out_degree": 1,
+      "maximum_out_degree": 5,
+      "interest_group_counts": {
+        "Music": 2,
+        "Sports": 8,
+        "Tech": 7,
+        "Travel": 3
+      },
+      "highest_in_degree_users": [
+        {
+          "user": "user_11",
+          "in_degree": 5
+        },
+        {
+          "user": "user_12",
+          "in_degree": 4
+        },
+        {
+          "user": "user_13",
+          "in_degree": 4
+        }
+      ]
+    },
+    "exercise_7": {
+      "nodes": 15,
+      "edges": 21,
+      "density": 0.2,
+      "top_betweenness_node": "Recommendation Systems",
+      "top_betweenness_value": 0.5384615384615385,
+      "connected": true,
+      "average_degree": 2.8,
+      "top_centrality_records": [
+        {
+          "label": "Recommendation Systems",
+          "node_type": "Research area",
+          "degree": 5,
+          "degree_centrality": 0.3571428571428571,
+          "betweenness_centrality": 0.5384615384615385,
+          "closeness_centrality": 0.56,
+          "pagerank": 0.12971890809868664
+        },
+        {
+          "label": "Artificial Intelligence",
+          "node_type": "Research area",
+          "degree": 3,
+          "degree_centrality": 0.21428571428571427,
+          "betweenness_centrality": 0.2509157509157509,
+          "closeness_centrality": 0.4666666666666667,
+          "pagerank": 0.07897051969569385
+        },
+        {
+          "label": "Deep Learning",
+          "node_type": "Method",
+          "degree": 4,
+          "degree_centrality": 0.2857142857142857,
+          "betweenness_centrality": 0.19230769230769232,
+          "closeness_centrality": 0.4666666666666667,
+          "pagerank": 0.1010876032563883
+        },
+        {
+          "label": "Computer Vision",
+          "node_type": "Research area",
+          "degree": 3,
+          "degree_centrality": 0.21428571428571427,
+          "betweenness_centrality": 0.16666666666666669,
+          "closeness_centrality": 0.4375,
+          "pagerank": 0.07949162751418684
+        },
+        {
+          "label": "Graph Neural Networks",
+          "node_type": "Method",
+          "degree": 3,
+          "degree_centrality": 0.21428571428571427,
+          "betweenness_centrality": 0.1611721611721612,
+          "closeness_centrality": 0.5,
+          "pagerank": 0.06300452219841791
+        }
+      ],
+      "interpretation": "Recommendation Systems is the strongest bridge by inverse-strength weighted betweenness, linking research themes, technical methods, and application outcomes. The graph is synthetic and demonstrates structural interpretation, not empirical evidence about a real research community.",
+      "standalone_html": "visualizations/interactive/domain_graph.html"
+    }
+  },
+  "scope_note": "The real Facebook dataset is analyzed as a table because it contains no verified user relationship identifiers. Relationship graphs are synthetic."
+}

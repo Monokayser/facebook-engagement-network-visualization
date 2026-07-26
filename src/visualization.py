@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import shutil
+import time
 from collections.abc import Callable
 from pathlib import Path
 
@@ -16,7 +17,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from matplotlib.lines import Line2D
 
-from src.config import INTERACTIVE, PUBLIC, SEED, STATIC, WEBSITE
+from src.config import INTERACTIVE, PUBLIC, SEED, STATIC
 
 COLORS = {
     "navy": "#17324D",
@@ -37,8 +38,25 @@ TYPE_COLORS = {
 
 def _save(fig: plt.Figure, path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    fig.savefig(path, dpi=300, bbox_inches="tight", facecolor="white")
-    plt.close(fig)
+    temporary = path.with_name(f".{path.stem}.tmp{path.suffix}")
+    try:
+        for attempt in range(10):
+            try:
+                fig.savefig(
+                    temporary,
+                    dpi=300,
+                    bbox_inches="tight",
+                    facecolor="white",
+                )
+                temporary.replace(path)
+                break
+            except OSError:
+                if attempt == 9:
+                    raise
+                time.sleep(0.25)
+    finally:
+        temporary.unlink(missing_ok=True)
+        plt.close(fig)
 
 
 def create_eda_figures(frame: pd.DataFrame) -> list[Path]:
@@ -215,7 +233,18 @@ def create_bipartite_figure(
 
     student_nodes = students["student_id"].tolist()
     course_nodes = courses["course_id"].tolist()
-    position = nx.bipartite_layout(graph, student_nodes, align="vertical", scale=2)
+    student_y = np.linspace(2, -2, len(student_nodes))
+    course_y = np.linspace(2, -2, len(course_nodes))
+    position = {
+        **{
+            node: np.array([-1.0, coordinate])
+            for node, coordinate in zip(student_nodes, student_y, strict=True)
+        },
+        **{
+            node: np.array([1.0, coordinate])
+            for node, coordinate in zip(course_nodes, course_y, strict=True)
+        },
+    }
     labels = nx.get_node_attributes(graph, "label")
     fig, ax = plt.subplots(figsize=(12, 9))
     nx.draw_networkx_edges(graph, position, ax=ax, edge_color="#C4CDD5", width=1)
@@ -407,16 +436,23 @@ def create_domain_static(graph: nx.Graph) -> Path:
 
 def _write_interactive(fig: go.Figure, filename: str) -> Path:
     path = INTERACTIVE / filename
+    temporary = INTERACTIVE / f".{filename}.tmp"
     fig.write_html(
-        path,
-        include_plotlyjs=True,
+        temporary,
+        include_plotlyjs="cdn",
         full_html=True,
         config={"responsive": True, "displaylogo": False},
+        div_id=f"plotly-{Path(filename).stem}",
     )
-    for destination in (
-        PUBLIC / "interactive" / filename,
-        WEBSITE / filename,
-    ):
+    for attempt in range(10):
+        try:
+            temporary.replace(path)
+            break
+        except PermissionError:
+            if attempt == 9:
+                raise
+            time.sleep(0.25)
+    for destination in (PUBLIC / "interactive" / filename,):
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(path, destination)
     return path

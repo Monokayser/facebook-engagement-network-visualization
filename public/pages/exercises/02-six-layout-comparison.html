@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Academic Facebook engagement and network visualization project">
+<title>Six-layout comparison | CSE628 Visual Analytics</title>
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--ink:#17324d;--paper:#f7f5ef;--coral:#e76f51;--blue:#3973a8;--muted:#607384;--line:#d9e0e5;--card:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 Arial,sans-serif}
+a{color:#bd4e35}a:focus-visible,button:focus-visible{outline:3px solid #1376a8;outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 36px));margin:auto}nav{position:sticky;top:0;z-index:10;background:rgba(247,245,239,.97);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:68px}nav a{text-decoration:none;font-weight:700;color:var(--ink)}nav .links{display:flex;gap:18px;flex-wrap:wrap}
+header{padding:72px 0 54px;background:var(--ink);color:#fff}header p{color:#cbd5dc;max-width:800px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.78rem;font-weight:800;color:var(--coral)}
+h1{font-size:clamp(2.5rem,6vw,5.2rem);line-height:1.02;letter-spacing:-.045em;margin:.25em 0}h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.12}h3{line-height:1.25}
+main section{padding:54px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(23,50,77,.05)}
+.card strong.metric{display:block;font-size:2rem}.button{display:inline-block;background:var(--coral);color:#fff!important;text-decoration:none;padding:11px 17px;border-radius:999px;font-weight:800;margin:4px 8px 4px 0}
+.button.secondary{background:#e8edf1;color:var(--ink)!important}figure{margin:28px 0}img{display:block;max-width:100%;height:auto;border-radius:14px}figcaption{color:var(--muted);font-size:.92rem;margin-top:8px}
+iframe{width:100%;min-height:720px;border:1px solid var(--line);border-radius:14px;background:#fff}pre{overflow:auto;background:#10263a;color:#eaf2f6;border-radius:14px;padding:20px;font:13px/1.55 Consolas,monospace}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#e9eef3}
+.notice{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}footer{padding:38px 0;background:#11283c;color:#fff}footer a{color:#ffab93}
+@media(max-width:850px){.grid{grid-template-columns:1fr}nav .wrap{align-items:flex-start;padding:12px 0;flex-direction:column}iframe{min-height:580px}}
+</style></head>
+<body>
+<nav><div class="wrap"><a href="../index.html">CSE628 Visual Analytics</a>
+<div class="links"><a href="../index.html#findings">Findings</a>
+<a href="../exercises/index.html">Exercises</a>
+<a href="../methodology.html">Methodology</a>
+<a href="../report/report.pdf">Report</a>
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">GitHub</a></div></div></nav>
+<header><div class="wrap"><p class="eyebrow">Exercise 02 · Complete study</p>
+<h1>Six-layout comparison</h1><p>Supplied Section 8.3 G_ppi graph</p></div></header>
+<main><section><div class="wrap"><h2>Objective and data source</h2>
+<p>The exercise reuses the required teaching definition and saves every calculated
+artifact through the deterministic Python pipeline. Relevant data:
+<a href="../downloads/outputs__analysis_summary.json"><code>outputs/analysis_summary.json</code></a>.</p>
+<div class="notice"><strong>Scope:</strong> The Facebook dataset is used for the empirical
+analysis. This mandatory network exercise uses the supplied or explicitly synthetic
+relationship data because the Facebook table has no verified user-to-user edges.</div>
+<h2>Verified result</h2><p>Kamada-Kawai was selected for this realization. Calculated average clustering is 0.000.</p><figure><img src="../images/g_ppi_layout_comparison.png" alt="Six-layout comparison visualization"><figcaption>Calculated visual output for Exercise 2.</figcaption></figure>
+<h2>Python implementation</h2><pre><code>def build_ppi_graph() -&gt; nx.Graph:
+    &quot;&quot;&quot;Recreate Section 8.3&#x27;s 15-node Watts-Strogatz protein graph.&quot;&quot;&quot;
+
+    proteins = [f&quot;P{i}&quot; for i in range(1, 16)]
+    graph = nx.watts_strogatz_graph(n=len(proteins), k=3, p=0.3, seed=SEED)
+    return nx.relabel_nodes(graph, {i: proteins[i] for i in range(len(proteins))})
+
+
+def create_layout_figures(graph: nx.Graph) -&gt; dict[str, Path]:
+    &quot;&quot;&quot;Draw G_ppi with the six required layouts using identical encodings.&quot;&quot;&quot;
+
+    layouts: dict[str, Callable[[], dict]] = {
+        &quot;spring&quot;: lambda: nx.spring_layout(graph, seed=SEED),
+        &quot;circular&quot;: lambda: nx.circular_layout(graph),
+        &quot;shell&quot;: lambda: nx.shell_layout(graph),
+        &quot;spectral&quot;: lambda: nx.spectral_layout(graph),
+        &quot;kamada_kawai&quot;: lambda: nx.kamada_kawai_layout(graph),
+        &quot;random&quot;: lambda: nx.random_layout(graph, seed=SEED),
+    }
+    degrees = dict(graph.degree())
+    sizes = [230 + 165 * degrees[node] for node in graph.nodes()]
+    saved: dict[str, Path] = {}
+
+    def draw(ax: plt.Axes, positions: dict, title: str) -&gt; None:
+        nx.draw_networkx(
+            graph,
+            positions,
+            ax=ax,
+            with_labels=True,
+            node_size=sizes,
+            node_color=&quot;#718F57&quot;,
+            edge_color=&quot;#99A3AD&quot;,
+            width=1.1,
+            font_size=7,
+            font_color=&quot;white&quot;,
+        )
+        ax.set_title(title.replace(&quot;_&quot;, &quot; &quot;).title())
+        ax.axis(&quot;off&quot;)
+
+    positions = {name: layout() for name, layout in layouts.items()}
+    fig, axes = plt.subplots(2, 3, figsize=(16, 10))
+    for ax, (name, position) in zip(axes.flat, positions.items(), strict=True):
+        draw(ax, position, name)
+    fig.suptitle(
+        &quot;G_ppi Layout Comparison: Identical Graph and Visual Encoding&quot;, fontsize=16
+    )
+    fig.tight_layout(rect=(0, 0, 1, 0.96))
+    comparison = STATIC / &quot;g_ppi_layout_comparison.png&quot;
+    _save(fig, comparison)
+    saved[&quot;comparison&quot;] = comparison
+    for name, position in positions.items():
+        fig, ax = plt.subplots(figsize=(8, 7))
+        draw(ax, position, f&quot;G_ppi - {name}&quot;)
+        path = STATIC / f&quot;g_ppi_{name}_layout.png&quot;
+        _save(fig, path)
+        saved[name] = path
+    return saved
+</code></pre>
+<p><a class="button" href="https://github.com/Monokayser/facebook-engagement-network-visualization/tree/main/src">Browse complete Python source</a>
+<a class="button secondary" href="../report/report.pdf">Read report section</a></p>
+<h2>Interpretation and limitation</h2>
+<p>For this exact 15-node realization, Kamada-Kawai minimizes pairwise distance stress and makes the ring-like locality plus rewired shortcuts most legible; spring is a close alternative. The measured average clustering is 0.0, so no layout can reveal triangle-based clustering that is absent from the supplied k=3 realization.</p>
+<p><strong>Limitation:</strong> Layout preference depends on graph scale, labels, parameters, and the analytical task.</p>
+</div></section></main>
+<footer><div class="wrap"><strong>Visual Analytics and Network Analysis</strong>
+<p>S. M. Monowar Kayser · 253-25-019 ·
+Daffodil International University</p>
+<p><a href="../report/report.pdf">PDF report</a> ·
+<a href="../report/report.docx">DOCX report</a> ·
+<a href="../report/report.md">Markdown report</a> ·
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">Source repository</a></p></div></footer></body></html>

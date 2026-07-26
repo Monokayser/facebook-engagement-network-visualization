@@ -13,10 +13,12 @@ import networkx as nx
 import numpy as np
 import pandas as pd
 
+from src.artifact_manifest import build_artifact_manifest
 from src.config import (
     ANALYSIS_SUMMARY,
     DATASET,
     EXERCISE_SUMMARIES,
+    INTERACTIVE,
     OUTPUTS,
     PROCESSED_CSV,
     PUBLIC,
@@ -48,8 +50,9 @@ from src.network_analysis import (
     student_course_findings,
     transport_representations,
 )
-from src.notebook_builder import generate_notebooks
+from src.notebook_builder import execute_notebooks, generate_notebooks
 from src.report_generator import generate_reports
+from src.site_generator import generate_static_site
 from src.visualization import (
     create_bipartite_figure,
     create_degree_distribution_figures,
@@ -88,6 +91,8 @@ def _copy_site_assets() -> None:
         shutil.copy2(image, destination)
     shutil.copy2(PROCESSED_CSV, PUBLIC / "data" / PROCESSED_CSV.name)
     shutil.copy2(ANALYSIS_SUMMARY, PUBLIC / "data" / ANALYSIS_SUMMARY.name)
+    for interactive in INTERACTIVE.glob("*.html"):
+        shutil.copy2(interactive, PUBLIC / "interactive" / interactive.name)
     for report_name in ("report.md", "report.docx", "report.pdf"):
         source = ROOT / "report" / report_name
         if source.exists():
@@ -329,9 +334,12 @@ def run_pipeline() -> dict[str, Any]:
         json.dumps(summary, indent=2, ensure_ascii=False, default=_json_default),
         encoding="utf-8",
     )
-    generate_notebooks()
+    notebooks = generate_notebooks()
     generate_reports()
     _copy_site_assets()
+    generate_static_site(summary)
+    execute_notebooks(notebooks)
+    build_artifact_manifest()
     LOGGER.info("Pipeline completed successfully.")
     return summary
 

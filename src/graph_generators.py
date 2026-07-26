@@ -90,7 +90,7 @@ def build_social_graph() -> nx.DiGraph:
             weights=candidate_weights,
             k=rng.randint(1, 5),
         )
-        edges.extend((user, target) for target in set(chosen))
+        edges.extend((user, target) for target in sorted(set(chosen)))
     graph = nx.DiGraph(name="G_social")
     graph.add_nodes_from(users)
     graph.add_edges_from(edges)

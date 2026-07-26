@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Academic Facebook engagement and network visualization project">
+<title>Student-course bipartite network | CSE628 Visual Analytics</title>
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--ink:#17324d;--paper:#f7f5ef;--coral:#e76f51;--blue:#3973a8;--muted:#607384;--line:#d9e0e5;--card:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 Arial,sans-serif}
+a{color:#bd4e35}a:focus-visible,button:focus-visible{outline:3px solid #1376a8;outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 36px));margin:auto}nav{position:sticky;top:0;z-index:10;background:rgba(247,245,239,.97);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:68px}nav a{text-decoration:none;font-weight:700;color:var(--ink)}nav .links{display:flex;gap:18px;flex-wrap:wrap}
+header{padding:72px 0 54px;background:var(--ink);color:#fff}header p{color:#cbd5dc;max-width:800px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.78rem;font-weight:800;color:var(--coral)}
+h1{font-size:clamp(2.5rem,6vw,5.2rem);line-height:1.02;letter-spacing:-.045em;margin:.25em 0}h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.12}h3{line-height:1.25}
+main section{padding:54px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(23,50,77,.05)}
+.card strong.metric{display:block;font-size:2rem}.button{display:inline-block;background:var(--coral);color:#fff!important;text-decoration:none;padding:11px 17px;border-radius:999px;font-weight:800;margin:4px 8px 4px 0}
+.button.secondary{background:#e8edf1;color:var(--ink)!important}figure{margin:28px 0}img{display:block;max-width:100%;height:auto;border-radius:14px}figcaption{color:var(--muted);font-size:.92rem;margin-top:8px}
+iframe{width:100%;min-height:720px;border:1px solid var(--line);border-radius:14px;background:#fff}pre{overflow:auto;background:#10263a;color:#eaf2f6;border-radius:14px;padding:20px;font:13px/1.55 Consolas,monospace}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#e9eef3}
+.notice{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}footer{padding:38px 0;background:#11283c;color:#fff}footer a{color:#ffab93}
+@media(max-width:850px){.grid{grid-template-columns:1fr}nav .wrap{align-items:flex-start;padding:12px 0;flex-direction:column}iframe{min-height:580px}}
+</style></head>
+<body>
+<nav><div class="wrap"><a href="../index.html">CSE628 Visual Analytics</a>
+<div class="links"><a href="../index.html#findings">Findings</a>
+<a href="../exercises/index.html">Exercises</a>
+<a href="../methodology.html">Methodology</a>
+<a href="../report/report.pdf">Report</a>
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">GitHub</a></div></div></nav>
+<header><div class="wrap"><p class="eyebrow">Exercise 03 · Complete study</p>
+<h1>Student-course bipartite network</h1><p>Stored synthetic student, course, and enrollment CSV files</p></div></header>
+<main><section><div class="wrap"><h2>Objective and data source</h2>
+<p>The exercise reuses the required teaching definition and saves every calculated
+artifact through the deterministic Python pipeline. Relevant data:
+<a href="../downloads/data__generated__enrollments.csv"><code>data/generated/enrollments.csv</code></a>.</p>
+<div class="notice"><strong>Scope:</strong> The Facebook dataset is used for the empirical
+analysis. This mandatory network exercise uses the supplied or explicitly synthetic
+relationship data because the Facebook table has no verified user-to-user edges.</div>
+<h2>Verified result</h2><p>Data Visualization has 12 enrollments; Imran Kabir takes 5 courses.</p><figure><img src="../images/student_course_bipartite_graph.png" alt="Student-course bipartite network visualization"><figcaption>Calculated visual output for Exercise 3.</figcaption></figure>
+<h2>Python implementation</h2><pre><code>def load_student_course_graph(
+    output_dir: Path = DATA_GENERATED,
+) -&gt; tuple[nx.Graph, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    &quot;&quot;&quot;Build the bipartite graph from stored CSV files.&quot;&quot;&quot;
+
+    students = pd.read_csv(output_dir / &quot;students.csv&quot;)
+    courses = pd.read_csv(output_dir / &quot;courses.csv&quot;)
+    enrollments = pd.read_csv(output_dir / &quot;enrollments.csv&quot;)
+    graph = nx.Graph(name=&quot;Synthetic student-course enrollment&quot;)
+    for record in students.to_dict(orient=&quot;records&quot;):
+        graph.add_node(
+            record[&quot;student_id&quot;],
+            node_type=&quot;student&quot;,
+            bipartite=0,
+            label=record[&quot;student_name&quot;],
+            major=record[&quot;major&quot;],
+        )
+    for record in courses.to_dict(orient=&quot;records&quot;):
+        graph.add_node(
+            record[&quot;course_id&quot;],
+            node_type=&quot;course&quot;,
+            bipartite=1,
+            label=record[&quot;course_name&quot;],
+            department=record[&quot;department&quot;],
+        )
+    graph.add_edges_from(enrollments.itertuples(index=False, name=None))
+    return graph, students, courses, enrollments
+
+
+def student_course_findings() -&gt; tuple[pd.DataFrame, dict[str, Any]]:
+    &quot;&quot;&quot;Calculate degree findings for the stored synthetic bipartite dataset.&quot;&quot;&quot;
+
+    graph, students, courses, _ = load_student_course_graph()
+    if not nx.algorithms.bipartite.is_bipartite(graph):
+        raise ValueError(&quot;Student-course graph is unexpectedly not bipartite&quot;)
+    records = []
+    for node, degree in graph.degree():
+        attrs = graph.nodes[node]
+        records.append(
+            {
+                &quot;node_id&quot;: node,
+                &quot;label&quot;: attrs[&quot;label&quot;],
+                &quot;node_type&quot;: attrs[&quot;node_type&quot;],
+                &quot;degree&quot;: degree,
+                &quot;major_or_department&quot;: attrs.get(&quot;major&quot;, attrs.get(&quot;department&quot;)),
+            }
+        )
+    summary = pd.DataFrame(records).sort_values(
+        [&quot;node_type&quot;, &quot;degree&quot;, &quot;node_id&quot;], ascending=[True, False, True]
+    )
+    summary.to_csv(TABLES / &quot;student_course_degree_summary.csv&quot;, index=False)
+    course_summary = summary[summary[&quot;node_type&quot;] == &quot;course&quot;]
+    student_summary = summary[summary[&quot;node_type&quot;] == &quot;student&quot;]
+    popular = course_summary.loc[course_summary[&quot;degree&quot;].idxmax()]
+    most_courses = student_summary.loc[student_summary[&quot;degree&quot;].idxmax()]
+    return summary, {
+        &quot;is_bipartite&quot;: True,
+        &quot;students&quot;: int(len(students)),
+        &quot;courses&quot;: int(len(courses)),
+        &quot;enrollments&quot;: graph.number_of_edges(),
+        &quot;most_popular_course&quot;: popular[&quot;label&quot;],
+        &quot;most_popular_course_enrollments&quot;: int(popular[&quot;degree&quot;]),
+        &quot;most_enrolled_student&quot;: most_courses[&quot;label&quot;],
+        &quot;most_enrolled_student_courses&quot;: int(most_courses[&quot;degree&quot;]),
+        &quot;bipartite_density&quot;: float(
+            nx.algorithms.bipartite.density(graph, students[&quot;student_id&quot;].tolist())
+        ),
+        &quot;mean_courses_per_student&quot;: float(student_summary[&quot;degree&quot;].mean()),
+        &quot;mean_students_per_course&quot;: float(course_summary[&quot;degree&quot;].mean()),
+        &quot;course_degrees&quot;: [
+            {&quot;course&quot;: row[&quot;label&quot;], &quot;enrollments&quot;: int(row[&quot;degree&quot;])}
+            for _, row in course_summary.iterrows()
+        ],
+        &quot;pattern&quot;: (
+            &quot;Data Visualization bridges every represented major. Data Science &quot;
+            &quot;students also concentrate in Machine Learning and Social Network Analysis, &quot;
+            &quot;while Multimedia Technology students favor Human-Computer Interaction.&quot;
+        ),
+    }
+</code></pre>
+<p><a class="button" href="https://github.com/Monokayser/facebook-engagement-network-visualization/tree/main/src">Browse complete Python source</a>
+<a class="button secondary" href="../report/report.pdf">Read report section</a></p>
+<h2>Interpretation and limitation</h2>
+<p>The output demonstrates the requested graph representation and visual encoding.</p>
+<p><strong>Limitation:</strong> All people, courses, and enrollments are synthetic teaching records.</p>
+</div></section></main>
+<footer><div class="wrap"><strong>Visual Analytics and Network Analysis</strong>
+<p>S. M. Monowar Kayser · 253-25-019 ·
+Daffodil International University</p>
+<p><a href="../report/report.pdf">PDF report</a> ·
+<a href="../report/report.docx">DOCX report</a> ·
+<a href="../report/report.md">Markdown report</a> ·
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">Source repository</a></p></div></footer></body></html>

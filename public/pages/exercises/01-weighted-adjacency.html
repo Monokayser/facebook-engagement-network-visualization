@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Academic Facebook engagement and network visualization project">
+<title>Weighted adjacency representations | CSE628 Visual Analytics</title>
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--ink:#17324d;--paper:#f7f5ef;--coral:#e76f51;--blue:#3973a8;--muted:#607384;--line:#d9e0e5;--card:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 Arial,sans-serif}
+a{color:#bd4e35}a:focus-visible,button:focus-visible{outline:3px solid #1376a8;outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 36px));margin:auto}nav{position:sticky;top:0;z-index:10;background:rgba(247,245,239,.97);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:68px}nav a{text-decoration:none;font-weight:700;color:var(--ink)}nav .links{display:flex;gap:18px;flex-wrap:wrap}
+header{padding:72px 0 54px;background:var(--ink);color:#fff}header p{color:#cbd5dc;max-width:800px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.78rem;font-weight:800;color:var(--coral)}
+h1{font-size:clamp(2.5rem,6vw,5.2rem);line-height:1.02;letter-spacing:-.045em;margin:.25em 0}h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.12}h3{line-height:1.25}
+main section{padding:54px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(23,50,77,.05)}
+.card strong.metric{display:block;font-size:2rem}.button{display:inline-block;background:var(--coral);color:#fff!important;text-decoration:none;padding:11px 17px;border-radius:999px;font-weight:800;margin:4px 8px 4px 0}
+.button.secondary{background:#e8edf1;color:var(--ink)!important}figure{margin:28px 0}img{display:block;max-width:100%;height:auto;border-radius:14px}figcaption{color:var(--muted);font-size:.92rem;margin-top:8px}
+iframe{width:100%;min-height:720px;border:1px solid var(--line);border-radius:14px;background:#fff}pre{overflow:auto;background:#10263a;color:#eaf2f6;border-radius:14px;padding:20px;font:13px/1.55 Consolas,monospace}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#e9eef3}
+.notice{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}footer{padding:38px 0;background:#11283c;color:#fff}footer a{color:#ffab93}
+@media(max-width:850px){.grid{grid-template-columns:1fr}nav .wrap{align-items:flex-start;padding:12px 0;flex-direction:column}iframe{min-height:580px}}
+</style></head>
+<body>
+<nav><div class="wrap"><a href="../index.html">CSE628 Visual Analytics</a>
+<div class="links"><a href="../index.html#findings">Findings</a>
+<a href="../exercises/index.html">Exercises</a>
+<a href="../methodology.html">Methodology</a>
+<a href="../report/report.pdf">Report</a>
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">GitHub</a></div></div></nav>
+<header><div class="wrap"><p class="eyebrow">Exercise 01 · Complete study</p>
+<h1>Weighted adjacency representations</h1><p>Supplied Section 8.2 G_transport graph</p></div></header>
+<main><section><div class="wrap"><h2>Objective and data source</h2>
+<p>The exercise reuses the required teaching definition and saves every calculated
+artifact through the deterministic Python pipeline. Relevant data:
+<a href="../downloads/outputs__tables__g_transport_adjacency_matrix.csv"><code>outputs/tables/g_transport_adjacency_matrix.csv</code></a>.</p>
+<div class="notice"><strong>Scope:</strong> The Facebook dataset is used for the empirical
+analysis. This mandatory network exercise uses the supplied or explicitly synthetic
+relationship data because the Facebook table has no verified user-to-user edges.</div>
+<h2>Verified result</h2><p>The 7 × 7 weighted matrix is symmetric: <strong>True</strong>. Total unique route distance is 2,056 km.</p>
+<h2>Python implementation</h2><pre><code>def build_transport_graph() -&gt; nx.Graph:
+    &quot;&quot;&quot;Recreate Section 8.2&#x27;s undirected weighted transportation graph.&quot;&quot;&quot;
+
+    routes = [
+        (&quot;Dhaka&quot;, &quot;Chattogram&quot;, 264),
+        (&quot;Dhaka&quot;, &quot;Sylhet&quot;, 247),
+        (&quot;Dhaka&quot;, &quot;Khulna&quot;, 209),
+        (&quot;Dhaka&quot;, &quot;Rajshahi&quot;, 256),
+        (&quot;Dhaka&quot;, &quot;Barishal&quot;, 170),
+        (&quot;Dhaka&quot;, &quot;Rangpur&quot;, 300),
+        (&quot;Khulna&quot;, &quot;Barishal&quot;, 130),
+        (&quot;Rajshahi&quot;, &quot;Rangpur&quot;, 130),
+        (&quot;Chattogram&quot;, &quot;Sylhet&quot;, 350),
+    ]
+    graph = nx.Graph(name=&quot;G_transport&quot;)
+    graph.add_weighted_edges_from(routes)
+    return graph
+
+
+def transport_representations(graph: nx.Graph) -&gt; tuple[pd.DataFrame, dict[str, Any]]:
+    &quot;&quot;&quot;Return and save the weighted adjacency representation.&quot;&quot;&quot;
+
+    nodes = list(graph.nodes())
+    matrix = nx.to_pandas_adjacency(graph, nodelist=nodes, weight=&quot;weight&quot;, dtype=float)
+    matrix.index.name = &quot;city&quot;
+    symmetric = bool(np.allclose(matrix.to_numpy(), matrix.to_numpy().T))
+    matrix.to_csv(TABLES / &quot;g_transport_adjacency_matrix.csv&quot;)
+    adjacency = {str(node): list(graph.neighbors(node)) for node in nodes}
+    weighted_edges = [
+        {
+            &quot;source&quot;: str(source),
+            &quot;target&quot;: str(target),
+            &quot;distance_km&quot;: int(data[&quot;weight&quot;]),
+        }
+        for source, target, data in graph.edges(data=True)
+    ]
+    longest_route = max(weighted_edges, key=lambda edge: edge[&quot;distance_km&quot;])
+    shortest_route = min(weighted_edges, key=lambda edge: edge[&quot;distance_km&quot;])
+    return matrix, {
+        &quot;adjacency_list&quot;: adjacency,
+        &quot;matrix_symmetric&quot;: symmetric,
+        &quot;node_order&quot;: nodes,
+        &quot;nodes&quot;: graph.number_of_nodes(),
+        &quot;edges&quot;: graph.number_of_edges(),
+        &quot;density&quot;: float(nx.density(graph)),
+        &quot;weighted_edges&quot;: weighted_edges,
+        &quot;total_recorded_distance_km&quot;: int(
+            sum(edge[&quot;distance_km&quot;] for edge in weighted_edges)
+        ),
+        &quot;longest_route&quot;: longest_route,
+        &quot;shortest_route&quot;: shortest_route,
+        &quot;highest_degree_city&quot;: max(graph.degree, key=lambda item: item[1])[0],
+        &quot;highest_degree&quot;: int(max(dict(graph.degree()).values())),
+        &quot;reason&quot;: (
+            &quot;Each undirected weighted edge contributes the same weight to cells &quot;
+            &quot;(u, v) and (v, u), so the matrix equals its transpose. A directed &quot;
+            &quot;graph or asymmetric directional weights would break this symmetry.&quot;
+        ),
+    }
+</code></pre>
+<p><a class="button" href="https://github.com/Monokayser/facebook-engagement-network-visualization/tree/main/src">Browse complete Python source</a>
+<a class="button secondary" href="../report/report.pdf">Read report section</a></p>
+<h2>Interpretation and limitation</h2>
+<p>The output demonstrates the requested graph representation and visual encoding.</p>
+<p><strong>Limitation:</strong> The route network is a compact classroom example, not a complete transport system.</p>
+</div></section></main>
+<footer><div class="wrap"><strong>Visual Analytics and Network Analysis</strong>
+<p>S. M. Monowar Kayser · 253-25-019 ·
+Daffodil International University</p>
+<p><a href="../report/report.pdf">PDF report</a> ·
+<a href="../report/report.docx">DOCX report</a> ·
+<a href="../report/report.md">Markdown report</a> ·
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">Source repository</a></p></div></footer></body></html>

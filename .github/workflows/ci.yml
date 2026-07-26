@@ -1,0 +1,46 @@
+name: Validate project
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install Python dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Rebuild analytical artifacts
+        run: python main.py
+      - name: Check Python formatting and quality
+        run: |
+          black --check .
+          ruff check .
+          pytest
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.9.0
+          run_install: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: pnpm
+      - name: Install website dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Validate hosted application
+        run: |
+          pnpm lint
+          pnpm test
+      - name: Scan tracked files for credential filenames
+        shell: bash
+        run: |
+          ! git ls-files | grep -Ei '(^|/)(\.env|kaggle\.json|.*\.(pem|key))$'

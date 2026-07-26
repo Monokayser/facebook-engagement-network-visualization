@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "algorithm": "sha256",
+  "artifact_count": 54,
+  "artifacts": {
+    "data/generated/courses.csv": {
+      "bytes": 291,
+      "sha256": "7381a81cf9e4473c24f87194577eabb77d24699da6c92f4b08f6e04662e5105e"
+    },
+    "data/generated/domain_graph_edges.csv": {
+      "bytes": 554,
+      "sha256": "9768fd3704f56bb7cbf91399c30e53440653e15c55f3fd99feb351c6ac5b8a5c"
+    },
+    "data/generated/domain_graph_nodes.csv": {
+      "bytes": 560,
+      "sha256": "dce3ebaf2d69bb0e0f3fd1deb18c02ac7bf5cf95b7d86dd2b2276402b6e7f766"
+    },
+    "data/generated/enrollments.csv": {
+      "bytes": 382,
+      "sha256": "706d4a051a02251e81c248f9a2fcc7fb824f5a1e7b1a7529b94946f5054134ee"
+    },
+    "data/generated/students.csv": {
+      "bytes": 465,
+      "sha256": "83ec808f0feff09f07a17d876435a1f6ba9e1947b52d864f0af1597b16d880df"
+    },
+    "data/processed/facebook_live_sellers_cleaned.csv": {
+      "bytes": 1016619,
+      "sha256": "108717ec972b2e148bf1a2659e2deed7a4a8686e85a19153df5da4578f34d5ae"
+    },
+    "data/raw/Live_20210128.csv": {
+      "bytes": 366355,
+      "sha256": "ea6a31aab095b15d3fd0c24a63d5d59822f1dd34922b09295179ea9c464a8d5b"
+    },
+    "notebooks/01_data_understanding.ipynb": {
+      "bytes": 15889,
+      "sha256": "90e4dfdfb75a8e3e238c8c3b139bc26b55048b6e984b284195890cb49435f8fa"
+    },
+    "notebooks/02_data_cleaning.ipynb": {
+      "bytes": 21808,
+      "sha256": "681600c5f3c8d0a6739b5d491b03e90c2faa430e7791149bf3aa0bdcfa8cdc63"
+    },
+    "notebooks/03_exploratory_data_analysis.ipynb": {
+      "bytes": 300183,
+      "sha256": "01b1076905f9a32188407806fd9e657a0ef6eb2b749dc001654f444acd4bb783"
+    },
+    "notebooks/04_network_analysis.ipynb": {
+      "bytes": 13161,
+      "sha256": "766ec8ab93dfd76d28f7e9687154d6e979611f5fa5d0df9ce9df339cd4273b37"
+    },
+    "notebooks/05_interactive_visualization.ipynb": {
+      "bytes": 3730,
+      "sha256": "4bea74d8ae4b944628b2dfd6c5d6bbf012391f7834ac14571132124a5ac72823"
+    },
+    "notebooks/06_hands_on_network_exercises.ipynb": {
+      "bytes": 3508389,
+      "sha256": "0530bf99e36fa617525b431db65ce9b44b489ff130c335b7e301229272da783e"
+    },
+    "outputs/analysis_summary.json": {
+      "bytes": 18413,
+      "sha256": "8de01950cfb46be3a47ebcc47a156a897df42574c35da7c78c86a37ca5ec7bef"
+    },
+    "outputs/exercise_summaries/exercise_01.txt": {
+      "bytes": 506,
+      "sha256": "031477225ac16f467eb2e031fe399a56585027f3340f0cc072e2e152d6294c9a"
+    },
+    "outputs/exercise_summaries/exercise_02.txt": {
+      "bytes": 421,
+      "sha256": "b625050510ccc0331ef29223419b5567e0b817448b4e87d8491f0cdcc1ce13ed"
+    },
+    "outputs/exercise_summaries/exercise_03.txt": {
+      "bytes": 370,
+      "sha256": "53091eb5f898f7374210c3fa8dac79d7c188931339087e2c1f9fd31c67fd375a"
+    },
+    "outputs/exercise_summaries/exercise_04.txt": {
+      "bytes": 301,
+      "sha256": "ab2c64f09fece484382036bddcdee485f030307e1efbdf0f9227756a781f15f0"
+    },
+    "outputs/exercise_summaries/exercise_05.txt": {
+      "bytes": 220,
+      "sha256": "8354f44b22415796e528429c7ecf4d14824c628cade2aa9ea4ec99739bbe5cec"
+    },
+    "outputs/exercise_summaries/exercise_06.txt": {
+      "bytes": 189,
+      "sha256": "2e937f335214fa750d869b82171a04b77acdb77b01684e7bef42dfe57dcaacba"
+    },
+    "outputs/exercise_summaries/exercise_07.txt": {
+      "bytes": 348,
+      "sha256": "d9d9d86667d29261416e81485f2ea5a7e484d6a9788c10795d8427b138122d72"
+    },
+    "outputs/tables/barabasi_albert_edge_weights.csv": {
+      "bytes": 1679,
+      "sha256": "e322ef29695cba471d270ee52fc768316c5b284ed59376968511f1e11cb1d999"
+    },
+    "outputs/tables/domain_graph_metrics.csv": {
+      "bytes": 1753,
+      "sha256": "c3ed6f441ac62ecda801cea2b95a3a9b409c84ce062f65125f6ee57548e48c0e"
+    },
+    "outputs/tables/engagement_by_post_type.csv": {
+      "bytes": 328,
+      "sha256": "1b78735b47bfdc53abbb11977af99f365bc39bc8e82ac25500b3c22808b6641a"
+    },
+    "outputs/tables/g_transport_adjacency_matrix.csv": {
+      "bytes": 359,
+      "sha256": "3400334c64855614e24a8ccc748a9fcf6803588adbb6c56ddff99856de97f450"
+    },
+    "outputs/tables/generative_models_comparison.csv": {
+      "bytes": 863,
+      "sha256": "4601475409bbeec52d5bba53e812cad35090199be203f8ed102af502df98d698"
+    },
+    "outputs/tables/student_course_degree_summary.csv": {
+      "bytes": 918,
+      "sha256": "1667fa630d97de3f392c6daeace9de5145e8b5193039a7b01468904ae2527854"
+    },
+    "outputs/tables/top_10_posts.csv": {
+      "bytes": 612,
+      "sha256": "97bbc97816971cf8f0cd12e0c018cba6dc62f85bbd5140c5d5389e7f3aaf2fd7"
+    },
+    "report/report.docx": {
+      "bytes": 2815154,
+      "sha256": "f76c058f25b93bd989a788481a0d1a756a93457771cfe60410799f88e4ed6029"
+    },
+    "report/report.md": {
+      "bytes": 52620,
+      "sha256": "6a892977ab47f49fcf7f9cf99147fd01ace4028aff1d4762a0872644f2a138e5"
+    },
+    "report/report.pdf": {
+      "bytes": 3156545,
+      "sha256": "7e355c8baf34a14f21625d26d4eecdad441e5a02f62cf7752dff5d53b927f520"
+    },
+    "visualizations/interactive/domain_graph.html": {
+      "bytes": 14407,
+      "sha256": "c55a455592eaa14c1b0ce7b8e0603ec1b3c2389c54a72acbaf55a429e1b04963"
+    },
+    "visualizations/interactive/engagement_explorer.html": {
+      "bytes": 955553,
+      "sha256": "085391283077908896247d4cc0fb16eaded89138e14ad30ff0f0ba3337af8660"
+    },
+    "visualizations/interactive/network_color_toggle_dashboard.html": {
+      "bytes": 21241,
+      "sha256": "9f05972172ae5c1bb2c7c62acd16286b40eed3f9c4abd6a99d4915bac42c0c9a"
+    },
+    "visualizations/static/barabasi_albert_unweighted.png": {
+      "bytes": 555436,
+      "sha256": "4acf0c471523fa525c42d5c31dc116b93659a2ebdce6a498d7b9ef8b7ad5fabb"
+    },
+    "visualizations/static/barabasi_albert_weighted.png": {
+      "bytes": 638749,
+      "sha256": "de57803223666837f6f3a826e826e7c4e58b8afe2ae40ec806bce9fc3338aefa"
+    },
+    "visualizations/static/domain_graph.png": {
+      "bytes": 334304,
+      "sha256": "f3022baae4b76a43203e72abfbf9b8cdd5555fae4e8f7a5aa0b071846f218b92"
+    },
+    "visualizations/static/engagement_by_post_type.png": {
+      "bytes": 87028,
+      "sha256": "cfb2033ad3389dc3a3cdf92bef7ba4a2e8c54b58f29758441d1aa3087827cd33"
+    },
+    "visualizations/static/engagement_correlation.png": {
+      "bytes": 126281,
+      "sha256": "b8b434a0c1deb72cd187a1a02a3e649bb419edf358e5265f7f07f4e5a522280e"
+    },
+    "visualizations/static/engagement_distribution.png": {
+      "bytes": 73933,
+      "sha256": "b3d53fc40b68657c6fd4cd950f67fdca97e8fd62230581659571cb412e198ab6"
+    },
+    "visualizations/static/g_ppi_circular_layout.png": {
+      "bytes": 171829,
+      "sha256": "5c50e7b6f1316cd2dd5dfecb93ab4da270556e3306a3ede9527c3fd8f7958eaf"
+    },
+    "visualizations/static/g_ppi_kamada_kawai_layout.png": {
+      "bytes": 109738,
+      "sha256": "17bbe9f70acbecfeea0ca92247a2413520e9706b0981b0bc3a4f5ef6a5559664"
+    },
+    "visualizations/static/g_ppi_layout_comparison.png": {
+      "bytes": 747059,
+      "sha256": "302bff5b5d63ba78088b01aab3fa3e61e6b989046e5437df9031ef261affb65d"
+    },
+    "visualizations/static/g_ppi_random_layout.png": {
+      "bytes": 203214,
+      "sha256": "266d7edf4d6135a6628e2d99b0b491bd6d9414317c97892bbad508aeb40f4288"
+    },
+    "visualizations/static/g_ppi_shell_layout.png": {
+      "bytes": 171302,
+      "sha256": "f79802883a84a4ac159bb61a80a7d299783ac6f6567bb9c461f223550cd259b4"
+    },
+    "visualizations/static/g_ppi_spectral_layout.png": {
+      "bytes": 78660,
+      "sha256": "b59f8c2c7ad64c41052f5f5e66cfe6da2cc6f43d6ad41efc6fe6da82c81b8b49"
+    },
+    "visualizations/static/g_ppi_spring_layout.png": {
+      "bytes": 94313,
+      "sha256": "9b8a593cd5cad4e837b7f72158e60a56c18e328a149193122b9c84956df8831f"
+    },
+    "visualizations/static/generative_models_degree_distribution.png": {
+      "bytes": 131868,
+      "sha256": "b45e52516d27255867de8670c658009cd998f261968303e469264c4192916796"
+    },
+    "visualizations/static/model_1_degree_distribution.png": {
+      "bytes": 51927,
+      "sha256": "983f2b6d59761efbf31a6cfaea09d08121151325f0387b81c8bb707df12f5c6a"
+    },
+    "visualizations/static/model_2_degree_distribution.png": {
+      "bytes": 66081,
+      "sha256": "97b8224cea54003e6c5be6b67b60374b971a0fbe5625bf03d7ab134c3d9113bc"
+    },
+    "visualizations/static/model_3_degree_distribution.png": {
+      "bytes": 60538,
+      "sha256": "70c5b725726e8cb7ce95fcc08bd5ff7319c25725cf945d46939ffc1346831e23"
+    },
+    "visualizations/static/monthly_engagement_trend.png": {
+      "bytes": 236959,
+      "sha256": "01daf2b00854ed1d9a9c9b31ba59c8783a287fbb2a1a240a61a1fcac3b891789"
+    },
+    "visualizations/static/posting_hour_engagement.png": {
+      "bytes": 77687,
+      "sha256": "51eb61d352c9715146f3a45d78ec3e234288d36828a0373c6d9161e0c15284c0"
+    },
+    "visualizations/static/student_course_bipartite_graph.png": {
+      "bytes": 747642,
+      "sha256": "7869d4057a9ba4646c0a99eb730b51165d5841f419bcb66d70548588acc2db95"
+    }
+  }
+}

@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Academic Facebook engagement and network visualization project">
+<title>Interactive node-color dashboard | CSE628 Visual Analytics</title>
+<link rel="icon" href="../favicon.svg">
+<style>
+:root{--ink:#17324d;--paper:#f7f5ef;--coral:#e76f51;--blue:#3973a8;--muted:#607384;--line:#d9e0e5;--card:#fff}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.65 Arial,sans-serif}
+a{color:#bd4e35}a:focus-visible,button:focus-visible{outline:3px solid #1376a8;outline-offset:3px}
+.wrap{width:min(1180px,calc(100% - 36px));margin:auto}nav{position:sticky;top:0;z-index:10;background:rgba(247,245,239,.97);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:22px;min-height:68px}nav a{text-decoration:none;font-weight:700;color:var(--ink)}nav .links{display:flex;gap:18px;flex-wrap:wrap}
+header{padding:72px 0 54px;background:var(--ink);color:#fff}header p{color:#cbd5dc;max-width:800px}.eyebrow{text-transform:uppercase;letter-spacing:.13em;font-size:.78rem;font-weight:800;color:var(--coral)}
+h1{font-size:clamp(2.5rem,6vw,5.2rem);line-height:1.02;letter-spacing:-.045em;margin:.25em 0}h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.12}h3{line-height:1.25}
+main section{padding:54px 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;box-shadow:0 8px 30px rgba(23,50,77,.05)}
+.card strong.metric{display:block;font-size:2rem}.button{display:inline-block;background:var(--coral);color:#fff!important;text-decoration:none;padding:11px 17px;border-radius:999px;font-weight:800;margin:4px 8px 4px 0}
+.button.secondary{background:#e8edf1;color:var(--ink)!important}figure{margin:28px 0}img{display:block;max-width:100%;height:auto;border-radius:14px}figcaption{color:var(--muted);font-size:.92rem;margin-top:8px}
+iframe{width:100%;min-height:720px;border:1px solid var(--line);border-radius:14px;background:#fff}pre{overflow:auto;background:#10263a;color:#eaf2f6;border-radius:14px;padding:20px;font:13px/1.55 Consolas,monospace}
+table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#e9eef3}
+.notice{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}footer{padding:38px 0;background:#11283c;color:#fff}footer a{color:#ffab93}
+@media(max-width:850px){.grid{grid-template-columns:1fr}nav .wrap{align-items:flex-start;padding:12px 0;flex-direction:column}iframe{min-height:580px}}
+</style></head>
+<body>
+<nav><div class="wrap"><a href="../index.html">CSE628 Visual Analytics</a>
+<div class="links"><a href="../index.html#findings">Findings</a>
+<a href="../exercises/index.html">Exercises</a>
+<a href="../methodology.html">Methodology</a>
+<a href="../report/report.pdf">Report</a>
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">GitHub</a></div></div></nav>
+<header><div class="wrap"><p class="eyebrow">Exercise 06 · Complete study</p>
+<h1>Interactive node-color dashboard</h1><p>Supplied Section 9 directed social-network pattern</p></div></header>
+<main><section><div class="wrap"><h2>Objective and data source</h2>
+<p>The exercise reuses the required teaching definition and saves every calculated
+artifact through the deterministic Python pipeline. Relevant data:
+<a href="../downloads/outputs__analysis_summary.json"><code>outputs/analysis_summary.json</code></a>.</p>
+<div class="notice"><strong>Scope:</strong> The Facebook dataset is used for the empirical
+analysis. This mandatory network exercise uses the supplied or explicitly synthetic
+relationship data because the Facebook table has no verified user-to-user edges.</div>
+<h2>Verified result</h2><p>20 nodes and 52 directed edges are shown. Positions remain unchanged between both color modes.</p><iframe title="Interactive node-color dashboard" src="../interactive/network_color_toggle_dashboard.html" loading="lazy"></iframe>
+<h2>Python implementation</h2><pre><code>def build_social_graph() -&gt; nx.DiGraph:
+    &quot;&quot;&quot;Recreate the seeded directed social graph used by Section 9.&quot;&quot;&quot;
+
+    rng = random.Random(SEED)
+    users = [f&quot;user_{i}&quot; for i in range(1, 21)]
+    groups = [&quot;Sports&quot;, &quot;Tech&quot;, &quot;Music&quot;, &quot;Travel&quot;]
+    user_group = {user: rng.choice(groups) for user in users}
+    edges: list[tuple[str, str]] = []
+    for user in users:
+        candidate_users = [candidate for candidate in users if candidate != user]
+        candidate_weights = [
+            3 if user_group[candidate] == user_group[user] else 1
+            for candidate in candidate_users
+        ]
+        chosen = rng.choices(
+            candidate_users,
+            weights=candidate_weights,
+            k=rng.randint(1, 5),
+        )
+        edges.extend((user, target) for target in sorted(set(chosen)))
+    graph = nx.DiGraph(name=&quot;G_social&quot;)
+    graph.add_nodes_from(users)
+    graph.add_edges_from(edges)
+    nx.set_node_attributes(graph, user_group, &quot;interest_group&quot;)
+    return graph
+
+
+def create_social_toggle_dashboard(graph: nx.DiGraph) -&gt; Path:
+    &quot;&quot;&quot;Create the required Plotly dropdown for interest group versus in-degree.&quot;&quot;&quot;
+
+    position = nx.spring_layout(graph, seed=SEED, k=0.6)
+    edge_x: list[float | None] = []
+    edge_y: list[float | None] = []
+    for source, target in graph.edges():
+        x0, y0 = position[source]
+        x1, y1 = position[target]
+        edge_x.extend([x0, x1, None])
+        edge_y.extend([y0, y1, None])
+    traces: list[go.Scatter] = [
+        go.Scatter(
+            x=edge_x,
+            y=edge_y,
+            mode=&quot;lines&quot;,
+            line={&quot;width&quot;: 0.8, &quot;color&quot;: &quot;#AAB4BD&quot;},
+            hoverinfo=&quot;skip&quot;,
+            name=&quot;Follows&quot;,
+            showlegend=False,
+        )
+    ]
+    group_colors = {
+        &quot;Sports&quot;: &quot;#3973A8&quot;,
+        &quot;Tech&quot;: &quot;#2A9D8F&quot;,
+        &quot;Music&quot;: &quot;#E76F51&quot;,
+        &quot;Travel&quot;: &quot;#8767A6&quot;,
+    }
+    in_degree = dict(graph.in_degree())
+    out_degree = dict(graph.out_degree())
+    for group, color in group_colors.items():
+        nodes = [node for node in graph if graph.nodes[node][&quot;interest_group&quot;] == group]
+        traces.append(
+            go.Scatter(
+                x=[position[node][0] for node in nodes],
+                y=[position[node][1] for node in nodes],
+                mode=&quot;markers&quot;,
+                name=group,
+                visible=True,
+                text=[
+                    (
+                        f&quot;&lt;b&gt;{node}&lt;/b&gt;&lt;br&gt;Interest group: {group}&quot;
+                        f&quot;&lt;br&gt;In-degree: {in_degree[node]}&quot;
+                        f&quot;&lt;br&gt;Out-degree: {out_degree[node]}&quot;
+                    )
+                    for node in nodes
+                ],
+                hoverinfo=&quot;text&quot;,
+                marker={
+                    &quot;size&quot;: [14 + 3 * in_degree[node] for node in nodes],
+                    &quot;color&quot;: color,
+                    &quot;line&quot;: {&quot;width&quot;: 1, &quot;color&quot;: &quot;white&quot;},
+                },
+            )
+        )
+    nodes = list(graph.nodes())
+    traces.append(
+        go.Scatter(
+            x=[position[node][0] for node in nodes],
+            y=[position[node][1] for node in nodes],
+            mode=&quot;markers&quot;,
+            name=&quot;In-degree&quot;,
+            visible=False,
+            text=[
+                (
+                    f&quot;&lt;b&gt;{node}&lt;/b&gt;&lt;br&gt;Interest group: &quot;
+                    f&quot;{graph.nodes[node][&#x27;interest_group&#x27;]}&quot;
+                    f&quot;&lt;br&gt;In-degree: {in_degree[node]}&quot;
+                    f&quot;&lt;br&gt;Out-degree: {out_degree[node]}&quot;
+                )
+                for node in nodes
+            ],
+            hoverinfo=&quot;text&quot;,
+            marker={
+                &quot;size&quot;: [14 + 3 * in_degree[node] for node in nodes],
+                &quot;color&quot;: [in_degree[node] for node in nodes],
+                &quot;colorscale&quot;: &quot;Viridis&quot;,
+                &quot;showscale&quot;: True,
+                &quot;colorbar&quot;: {&quot;title&quot;: &quot;In-degree&quot;},
+                &quot;line&quot;: {&quot;width&quot;: 1, &quot;color&quot;: &quot;white&quot;},
+            },
+        )
+    )
+    interest_visibility = [True, True, True, True, True, False]
+    degree_visibility = [True, False, False, False, False, True]
+    fig = go.Figure(data=traces)
+    fig.update_layout(
+        title=&quot;Directed Social Network - Color by Interest Group&quot;,
+        template=&quot;plotly_white&quot;,
+        hovermode=&quot;closest&quot;,
+        margin={&quot;l&quot;: 20, &quot;r&quot;: 20, &quot;t&quot;: 90, &quot;b&quot;: 20},
+        xaxis={&quot;visible&quot;: False},
+        yaxis={&quot;visible&quot;: False},
+        height=700,
+        legend={&quot;orientation&quot;: &quot;h&quot;, &quot;y&quot;: -0.05},
+        updatemenus=[
+            {
+                &quot;type&quot;: &quot;dropdown&quot;,
+                &quot;direction&quot;: &quot;down&quot;,
+                &quot;x&quot;: 0.01,
+                &quot;y&quot;: 1.12,
+                &quot;buttons&quot;: [
+                    {
+                        &quot;label&quot;: &quot;Color by Interest Group&quot;,
+                        &quot;method&quot;: &quot;update&quot;,
+                        &quot;args&quot;: [
+                            {&quot;visible&quot;: interest_visibility},
+                            {
+                                &quot;title&quot;: &quot;Directed Social Network - Color by Interest Group&quot;
+                            },
+                        ],
+                    },
+                    {
+                        &quot;label&quot;: &quot;Color by In-Degree&quot;,
+                        &quot;method&quot;: &quot;update&quot;,
+                        &quot;args&quot;: [
+                            {&quot;visible&quot;: degree_visibility},
+                            {&quot;title&quot;: &quot;Directed Social Network - Color by In-Degree&quot;},
+                        ],
+                    },
+                ],
+            }
+        ],
+    )
+    return _write_interactive(fig, &quot;network_color_toggle_dashboard.html&quot;)
+</code></pre>
+<p><a class="button" href="https://github.com/Monokayser/facebook-engagement-network-visualization/tree/main/src">Browse complete Python source</a>
+<a class="button secondary" href="../report/report.pdf">Read report section</a></p>
+<h2>Interpretation and limitation</h2>
+<p>The output demonstrates the requested graph representation and visual encoding.</p>
+<p><strong>Limitation:</strong> The social graph is synthetic and Plotly line segments do not display arrowheads.</p>
+</div></section></main>
+<footer><div class="wrap"><strong>Visual Analytics and Network Analysis</strong>
+<p>S. M. Monowar Kayser · 253-25-019 ·
+Daffodil International University</p>
+<p><a href="../report/report.pdf">PDF report</a> ·
+<a href="../report/report.docx">DOCX report</a> ·
+<a href="../report/report.md">Markdown report</a> ·
+<a href="https://github.com/Monokayser/facebook-engagement-network-visualization">Source repository</a></p></div></footer></body></html>

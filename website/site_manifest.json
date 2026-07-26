@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "repository_url": "https://github.com/Monokayser/facebook-engagement-network-visualization",
+  "pages_url": "https://monokayser.github.io/facebook-engagement-network-visualization/",
+  "exercise_pages": [
+    "exercises/01-weighted-adjacency.html",
+    "exercises/02-six-layout-comparison.html",
+    "exercises/03-student-course-bipartite.html",
+    "exercises/04-weighted-barabasi-albert.html",
+    "exercises/05-generative-model-comparison.html",
+    "exercises/06-interactive-color-dashboard.html",
+    "exercises/07-applied-ai-knowledge-graph.html"
+  ],
+  "canonical_summary": "outputs/analysis_summary.json"
+}

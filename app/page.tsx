@@ -18,37 +18,44 @@ const exercises = [
     number: "01",
     title: "Weighted adjacency",
     result: "The 7 × 7 kilometer matrix is symmetric.",
+    href: "/pages/exercises/01-weighted-adjacency.html",
   },
   {
     number: "02",
     title: "Six graph layouts",
     result:
       "Kamada–Kawai best exposes ring locality and shortcuts; the supplied realization has zero triangle clustering.",
+    href: "/pages/exercises/02-six-layout-comparison.html",
   },
   {
     number: "03",
     title: "Bipartite enrollment",
     result: "Data Visualization reaches all 12 synthetic students.",
+    href: "/pages/exercises/03-student-course-bipartite.html",
   },
   {
     number: "04",
     title: "Weighted BA graph",
     result: "196 edges encode seeded weights from 1 to 10.",
+    href: "/pages/exercises/04-weighted-barabasi-albert.html",
   },
   {
     number: "05",
     title: "Generative models",
     result: "Small-world clustering and scale-free hubs remain distinct strengths.",
+    href: "/pages/exercises/05-generative-model-comparison.html",
   },
   {
     number: "06",
     title: "Interactive color toggle",
     result: "Switch between interest group and in-degree without moving nodes.",
+    href: "/pages/exercises/06-interactive-color-dashboard.html",
   },
   {
     number: "07",
     title: "Research knowledge graph",
     result: "Recommendation Systems is the strongest synthetic bridge.",
+    href: "/pages/exercises/07-applied-ai-knowledge-graph.html",
   },
 ];
 
@@ -151,6 +158,8 @@ export default function Home() {
             </div>
             <span className="badge">7,050 posts</span>
           </div>
+          {/* The generated chart is already a publication-resolution asset. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/engagement_by_post_type.png"
             alt="Grouped bars comparing mean reactions, comments, and shares for video, status, link, and photo posts"
@@ -217,6 +226,8 @@ export default function Home() {
           </p>
         </div>
         <div className="dark-figure">
+          {/* The generated chart is already a publication-resolution asset. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/images/g_ppi_layout_comparison.png"
             alt="Six layouts of the identical 15-node synthetic protein interaction graph"
@@ -252,6 +263,9 @@ export default function Home() {
               <span>{exercise.number}</span>
               <h3>{exercise.title}</h3>
               <p>{exercise.result}</p>
+              <a className="exercise-link" href={exercise.href}>
+                Code, output and analysis →
+              </a>
             </article>
           ))}
         </div>
@@ -380,7 +394,9 @@ export default function Home() {
           <a href="/report.pdf">PDF report</a>
           <a href="/report.docx">DOCX report</a>
           <a href="/report.md">Markdown report</a>
-          <a href="https://github.com/Monokayser">GitHub profile</a>
+          <a href="https://github.com/Monokayser/facebook-engagement-network-visualization">
+            Source repository
+          </a>
         </div>
       </footer>
     </main>
