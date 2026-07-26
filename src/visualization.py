@@ -444,6 +444,13 @@ def _write_interactive(fig: go.Figure, filename: str) -> Path:
         config={"responsive": True, "displaylogo": False},
         div_id=f"plotly-{Path(filename).stem}",
     )
+    html = temporary.read_text(encoding="utf-8")
+    html = html.replace(
+        "</head>",
+        "<style>html,body{height:100%;margin:0;overflow:hidden}</style></head>",
+        1,
+    )
+    temporary.write_text(html, encoding="utf-8")
     for attempt in range(10):
         try:
             temporary.replace(path)
