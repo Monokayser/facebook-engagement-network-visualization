@@ -62,6 +62,59 @@ def test_all_notebooks_are_executed_without_error_outputs() -> None:
         ), path.name
 
 
+def test_every_exercise_has_a_complete_verified_file_pack() -> None:
+    folders = sorted((ROOT / "exercises").glob("[0-9][0-9]_*"))
+    assert len(folders) == 7
+    for folder in folders:
+        python_files = sorted(folder.glob("*.py"))
+        source_notebooks = sorted(
+            path
+            for path in folder.glob("*.ipynb")
+            if not path.name.endswith("_executed.ipynb")
+        )
+        executed_notebooks = sorted(folder.glob("*_executed.ipynb"))
+        html_files = sorted(folder.glob("*.html"))
+        assert len(python_files) == 1, folder.name
+        assert len(source_notebooks) == 1, folder.name
+        assert len(executed_notebooks) == 1, folder.name
+        assert len(html_files) == 1, folder.name
+
+        source = nbformat.read(source_notebooks[0], as_version=4)
+        source_code = [cell for cell in source.cells if cell.cell_type == "code"]
+        assert source_code
+        assert all(cell.execution_count is None for cell in source_code)
+        assert all(not cell.get("outputs") for cell in source_code)
+
+        executed = nbformat.read(executed_notebooks[0], as_version=4)
+        executed_code = [cell for cell in executed.cells if cell.cell_type == "code"]
+        assert executed_code
+        assert all(cell.execution_count is not None for cell in executed_code)
+        assert not any(
+            output.output_type == "error"
+            for cell in executed_code
+            for output in cell.get("outputs", [])
+        )
+
+        html_text = html_files[0].read_text(encoding="utf-8")
+        assert "<!DOCTYPE html>" in html_text
+        assert f"Exercise {int(folder.name[:2])}" in html_text
+        assert "<title>Notebook</title>" not in html_text
+
+        web_folder = ROOT / "website" / "exercise-files" / folder.name.replace("_", "-")
+        for source_path in (
+            python_files[0],
+            source_notebooks[0],
+            executed_notebooks[0],
+            html_files[0],
+        ):
+            published = web_folder / source_path.name
+            assert published.exists(), published
+            assert (
+                sha256(source_path.read_bytes()).digest()
+                == sha256(published.read_bytes()).digest()
+            )
+
+
 def test_every_exercise_page_contains_required_evidence() -> None:
     pages = sorted((ROOT / "website" / "exercises").glob("[0-9][0-9]-*.html"))
     assert len(pages) == 7
@@ -74,11 +127,16 @@ def test_every_exercise_page_contains_required_evidence() -> None:
             "Verified result and visualization",
             "Python implementation",
             "Interpretation and limitation",
+            "Complete exercise file pack",
+            "Clean notebook",
+            "Executed notebook",
+            "Browser notebook",
             "Download exercise data",
             "blob/main/src/",
             "<pre><code>",
         ):
             assert required in text, (path.name, required)
+        assert text.count('class="artifact-card"') >= 4
 
 
 def test_exercise_index_is_an_ordered_seven_step_pathway() -> None:

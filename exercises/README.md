@@ -2,6 +2,20 @@
 
 All stochastic operations use seed `42`. Exercise definitions reuse the supplied teaching notebook wherever a source graph exists.
 
+## Exercise file format
+
+Each numbered subfolder contains four synchronized files:
+
+- `exercise_XX_*.py` - reusable Python source exported from the clean notebook.
+- `exercise_XX_*.ipynb` - editable notebook with no stored outputs.
+- `exercise_XX_*_executed.ipynb` - clean-kernel execution with outputs stored.
+- `exercise_XX_*.html` - browser-ready export of the executed notebook.
+
+Exercises 6 and 7 also link to their standalone Plotly HTML visualizations. The
+project website exposes every file from the corresponding exercise page, and
+automated tests verify that the clean notebooks remain clean, the executed notebooks
+contain no error outputs, and the published copies are byte-identical.
+
 ## Exercise 1 — Weighted adjacency representations
 
 - **Objective:** Reuse Section 8.2 `G_transport`; print its adjacency list and create the kilometer matrix.

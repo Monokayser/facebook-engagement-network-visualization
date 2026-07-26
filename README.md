@@ -158,6 +158,12 @@ Use the [step-by-step exercise website](https://monokayser.github.io/facebook-en
 to work through all seven studies in order. Detailed implementation notes and
 limitations are in [exercises/README.md](exercises/README.md).
 
+Each numbered folder under [`exercises/`](exercises/) contains a standalone
+Python file, a clean editable notebook, a separately executed notebook with
+verified outputs, and a browser-ready HTML notebook. Every exercise page exposes
+these four synchronized formats; Exercises 6 and 7 additionally provide their
+standalone interactive Plotly HTML files.
+
 ## Reports and dashboard
 
 - [Academic report (Markdown)](report/report.md)
@@ -168,10 +174,10 @@ limitations are in [exercises/README.md](exercises/README.md).
 The interactive dashboard embeds self-contained Plotly files, works without local absolute paths, and provides responsive desktop, tablet, and mobile layouts.
 
 Every exercise has a dedicated generated web page containing its source
-definition, relevant data download, Python implementation, visual output,
-verified result, interpretation, limitation, report link, and direct links to
-the canonical source modules. Previous/next controls preserve the intended
-one-by-one learning sequence.
+definition, relevant data download, four-file exercise pack, Python
+implementation, visual output, verified result, interpretation, limitation,
+report link, and direct links to the canonical source modules. Previous/next
+controls preserve the intended one-by-one learning sequence.
 
 ## Public deployment
 

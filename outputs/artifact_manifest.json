@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "algorithm": "sha256",
-  "artifact_count": 54,
+  "artifact_count": 82,
   "artifacts": {
     "data/generated/courses.csv": {
       "bytes": 291,
@@ -31,6 +31,118 @@
       "bytes": 366355,
       "sha256": "ea6a31aab095b15d3fd0c24a63d5d59822f1dd34922b09295179ea9c464a8d5b"
     },
+    "exercises/01_weighted_adjacency/exercise_01_weighted_adjacency.html": {
+      "bytes": 296098,
+      "sha256": "ca03049d73767870fac21b43124a35cb57df22504ade737c77b5127c2303f2e6"
+    },
+    "exercises/01_weighted_adjacency/exercise_01_weighted_adjacency.ipynb": {
+      "bytes": 3284,
+      "sha256": "a82fdf080d38bc7d0297f49a3aee34f8bdebc35b547008cdacec4393141d16b4"
+    },
+    "exercises/01_weighted_adjacency/exercise_01_weighted_adjacency.py": {
+      "bytes": 2089,
+      "sha256": "ba8eae86158d8f08b4b8c020fecd223be6c53570f62e2291771181f08aad4f1a"
+    },
+    "exercises/01_weighted_adjacency/exercise_01_weighted_adjacency_executed.ipynb": {
+      "bytes": 8640,
+      "sha256": "d5be8d6c2e29c46214fd2532c424d2f4fdeec3c89d37e16af56c4bd691cd19cf"
+    },
+    "exercises/02_six_layout_comparison/exercise_02_six_layout_comparison.html": {
+      "bytes": 1289614,
+      "sha256": "3726da7fc8233c5e5f95c74df1574fc50b005254cc204fa09996d8a4559e9a40"
+    },
+    "exercises/02_six_layout_comparison/exercise_02_six_layout_comparison.ipynb": {
+      "bytes": 3144,
+      "sha256": "29daec7d6f010caa562147dcc99af85ac1834fbaf884020f2f3d69f13c38f6e1"
+    },
+    "exercises/02_six_layout_comparison/exercise_02_six_layout_comparison.py": {
+      "bytes": 1979,
+      "sha256": "5832756c818387d62a5a9dc1fefb5de9b4324b7b9e7b906687aa3da245985fe8"
+    },
+    "exercises/02_six_layout_comparison/exercise_02_six_layout_comparison_executed.ipynb": {
+      "bytes": 1000529,
+      "sha256": "c30c8389cac36ebef707c009f58654fd9860e4b3567f0d50460a4867c7e2ac9f"
+    },
+    "exercises/03_student_course_bipartite/exercise_03_student_course_bipartite.html": {
+      "bytes": 1293766,
+      "sha256": "51a115c3da847c0769788952301e5259aabbdf60cae2783114518f9a6bf739e7"
+    },
+    "exercises/03_student_course_bipartite/exercise_03_student_course_bipartite.ipynb": {
+      "bytes": 3314,
+      "sha256": "212378a7b05727fb620ea35d575f059c5dcbe22f2da49935d927f550be32e070"
+    },
+    "exercises/03_student_course_bipartite/exercise_03_student_course_bipartite.py": {
+      "bytes": 2107,
+      "sha256": "32d81776e5c65164fe8aa34850234a551448fb4cb1b9f23c330524e8376079f8"
+    },
+    "exercises/03_student_course_bipartite/exercise_03_student_course_bipartite_executed.ipynb": {
+      "bytes": 1009003,
+      "sha256": "b65163de6f249f553a0d3356f2cf3d5fb79616ce17683ce9d1d80ab022646e56"
+    },
+    "exercises/04_weighted_barabasi_albert/exercise_04_weighted_barabasi_albert.html": {
+      "bytes": 1146554,
+      "sha256": "886c5b56a301ac76b62fd19cba58ce268cb903fd3dfc4a3b3493a9b86352d9ff"
+    },
+    "exercises/04_weighted_barabasi_albert/exercise_04_weighted_barabasi_albert.ipynb": {
+      "bytes": 3083,
+      "sha256": "56008ddabb5d85733a092e2b09dfb9c7a15a7f559a1db3325bc1b43ea95ca92f"
+    },
+    "exercises/04_weighted_barabasi_albert/exercise_04_weighted_barabasi_albert.py": {
+      "bytes": 1903,
+      "sha256": "e7636a17b4cb1c09ed722be3f1e769897de7c53a187e550d03c9b91ff16f0745"
+    },
+    "exercises/04_weighted_barabasi_albert/exercise_04_weighted_barabasi_albert_executed.ipynb": {
+      "bytes": 858958,
+      "sha256": "964db879eb9a3eb36c5d0d685d7eea835bfe681f161a0c6d9fb48673caa493ae"
+    },
+    "exercises/05_generative_model_comparison/exercise_05_generative_model_comparison.html": {
+      "bytes": 470728,
+      "sha256": "2889250aae7cdb98c701e5e16387b5343107c771928abde5e16642a7366185ee"
+    },
+    "exercises/05_generative_model_comparison/exercise_05_generative_model_comparison.ipynb": {
+      "bytes": 3203,
+      "sha256": "330993bc6ab5c65e3730bb09dcfcbd324ae9a87c4ff582f3a9ca06c0e6efc9ea"
+    },
+    "exercises/05_generative_model_comparison/exercise_05_generative_model_comparison.py": {
+      "bytes": 2008,
+      "sha256": "b067509915c1c160e3fab3d63b338ba23e0c565bc696002cde1cec4315974d4e"
+    },
+    "exercises/05_generative_model_comparison/exercise_05_generative_model_comparison_executed.ipynb": {
+      "bytes": 184351,
+      "sha256": "1da2dcf187329bcfa00b349e0da79d9ff38625cc1e296c8d544a2733bf57bc1d"
+    },
+    "exercises/06_interactive_color_dashboard/exercise_06_interactive_color_dashboard.html": {
+      "bytes": 294192,
+      "sha256": "bf6d9d501f3530a2a58af2e09a9ca210455f0c21d456274ac406c1cd62b7ef5f"
+    },
+    "exercises/06_interactive_color_dashboard/exercise_06_interactive_color_dashboard.ipynb": {
+      "bytes": 3338,
+      "sha256": "fab7974e9f8cfec30c8fe5810ae7b900f0340019424c1b59408adee12f5d51c3"
+    },
+    "exercises/06_interactive_color_dashboard/exercise_06_interactive_color_dashboard.py": {
+      "bytes": 2130,
+      "sha256": "c1e422d91af00b75ca3ea40a8a34c07e5e1518089920c57aa125aa24222dbdc6"
+    },
+    "exercises/06_interactive_color_dashboard/exercise_06_interactive_color_dashboard_executed.ipynb": {
+      "bytes": 4260,
+      "sha256": "d01268f191085782d3f55ce413c9cfef4127842eea8101059494b0fe79c491f7"
+    },
+    "exercises/07_applied_ai_knowledge_graph/exercise_07_applied_ai_knowledge_graph.html": {
+      "bytes": 741827,
+      "sha256": "0f00460d855e92a0e1f2ba3736293cc85a8ed549bfa7103074ba697f179b2ed6"
+    },
+    "exercises/07_applied_ai_knowledge_graph/exercise_07_applied_ai_knowledge_graph.ipynb": {
+      "bytes": 3184,
+      "sha256": "a7a3077f6bb082d76db96a496ed0c7721b385416a47336938f9b2c4779b3931e"
+    },
+    "exercises/07_applied_ai_knowledge_graph/exercise_07_applied_ai_knowledge_graph.py": {
+      "bytes": 1994,
+      "sha256": "34e6ac164ec986ae96ff88ac18280f32682ed67dd4f42b3ea9507af7a815704e"
+    },
+    "exercises/07_applied_ai_knowledge_graph/exercise_07_applied_ai_knowledge_graph_executed.ipynb": {
+      "bytes": 456704,
+      "sha256": "2b9f19515029c6de5e355c98d1008bd24b36edcf17f879cde8f9d847afdac8d6"
+    },
     "notebooks/01_data_understanding.ipynb": {
       "bytes": 15889,
       "sha256": "90e4dfdfb75a8e3e238c8c3b139bc26b55048b6e984b284195890cb49435f8fa"
@@ -40,8 +152,8 @@
       "sha256": "681600c5f3c8d0a6739b5d491b03e90c2faa430e7791149bf3aa0bdcfa8cdc63"
     },
     "notebooks/03_exploratory_data_analysis.ipynb": {
-      "bytes": 300183,
-      "sha256": "01b1076905f9a32188407806fd9e657a0ef6eb2b749dc001654f444acd4bb783"
+      "bytes": 300519,
+      "sha256": "f569d4ac4280df5a4ece13a038f98845be9ec73cb00bda712c169cad0f711468"
     },
     "notebooks/04_network_analysis.ipynb": {
       "bytes": 13161,
@@ -52,8 +164,8 @@
       "sha256": "4bea74d8ae4b944628b2dfd6c5d6bbf012391f7834ac14571132124a5ac72823"
     },
     "notebooks/06_hands_on_network_exercises.ipynb": {
-      "bytes": 3508389,
-      "sha256": "0530bf99e36fa617525b431db65ce9b44b489ff130c335b7e301229272da783e"
+      "bytes": 3509279,
+      "sha256": "65793198848d36427e99f2e079c13e54bec37a5617573417431fb72f46cf154d"
     },
     "outputs/analysis_summary.json": {
       "bytes": 18413,

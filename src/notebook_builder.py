@@ -4,12 +4,24 @@ from __future__ import annotations
 
 import os
 import sys
+from copy import deepcopy
 from pathlib import Path
 
 import nbformat
 from nbclient import NotebookClient
+from nbconvert import HTMLExporter, PythonExporter
 
 from src.config import NOTEBOOKS, ROOT, STUDENT
+
+EXERCISE_ARTIFACT_SPECS = [
+    (1, "weighted_adjacency", "Weighted adjacency representations"),
+    (2, "six_layout_comparison", "Six-layout comparison"),
+    (3, "student_course_bipartite", "Student-course bipartite network"),
+    (4, "weighted_barabasi_albert", "Weighted Barabasi-Albert graph"),
+    (5, "generative_model_comparison", "Generative-model comparison"),
+    (6, "interactive_color_dashboard", "Interactive node-color dashboard"),
+    (7, "applied_ai_knowledge_graph", "Applied AI and Multimedia knowledge graph"),
+]
 
 
 def _base_cells(title: str, purpose: str) -> list:
@@ -77,7 +89,8 @@ def _exercise_cells() -> list:
             "from src.graph_generators import build_ppi_graph, graph_metrics\n"
             "G_ppi = build_ppi_graph()\n"
             "display(graph_metrics(G_ppi))\n"
-            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'g_ppi_layout_comparison.png')))"
+            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'g_ppi_layout_comparison.png'), "
+            "alt='Six layouts of the same synthetic small-world graph'))"
         ),
         nbformat.v4.new_markdown_cell(
             "**Interpretation.** Kamada-Kawai gives the clearest distance-oriented view "
@@ -100,7 +113,8 @@ def _exercise_cells() -> list:
             "degree_table, student_result = student_course_findings()\n"
             "print('Bipartite:', nx.algorithms.bipartite.is_bipartite(student_graph))\n"
             "display(degree_table)\n"
-            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'student_course_bipartite_graph.png')))"
+            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'student_course_bipartite_graph.png'), "
+            "alt='Synthetic student-course bipartite enrollment graph'))"
         ),
         nbformat.v4.new_markdown_cell(
             "**Interpretation.** Degree represents course load for student nodes and "
@@ -118,7 +132,8 @@ def _exercise_cells() -> list:
             "weights = pd.read_csv(ROOT / 'outputs' / 'tables' / 'barabasi_albert_edge_weights.csv')\n"
             "display(weights.head(10))\n"
             "display(weights['weight'].describe())\n"
-            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'barabasi_albert_weighted.png')))"
+            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'barabasi_albert_weighted.png'), "
+            "alt='Barabasi-Albert graph with edge weight encoded through width'))"
         ),
         nbformat.v4.new_markdown_cell(
             "**Interpretation.** Width changes the salience of selected ties, but random "
@@ -136,7 +151,8 @@ def _exercise_cells() -> list:
             "from src.network_analysis import compare_generative_models\n"
             "model_table, distributions = compare_generative_models(build_generative_models())\n"
             "display(model_table)\n"
-            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'generative_models_degree_distribution.png')))"
+            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'generative_models_degree_distribution.png'), "
+            "alt='Degree distributions of three seeded generative graph models'))"
         ),
         nbformat.v4.new_markdown_cell(
             "**Interpretation.** Watts-Strogatz better represents clustering and short "
@@ -156,7 +172,7 @@ def _exercise_cells() -> list:
             "dashboard_html = dashboard_path.read_text(encoding='utf-8')\n"
             "print('Standalone size:', f'{dashboard_path.stat().st_size / 1024:.1f} KiB')\n"
             "print('Dropdown labels present:', all(label in dashboard_html for label in ['Color by Interest Group', 'Color by In-Degree']))\n"
-            'display(HTML(\'<a href="../visualizations/interactive/network_color_toggle_dashboard.html" target="_blank">Open standalone dashboard</a>\'))'
+            'display(HTML(\'<a href="../../visualizations/interactive/network_color_toggle_dashboard.html" target="_blank">Open standalone dashboard</a>\'))'
         ),
         nbformat.v4.new_markdown_cell(
             "**Interpretation.** Fixed coordinates isolate the effect of color: the "
@@ -175,7 +191,8 @@ def _exercise_cells() -> list:
             "domain_table, domain_result = domain_metrics()\n"
             "display(domain_table.head(10))\n"
             "print('Top bridge:', domain_result['top_betweenness_node'], domain_result['top_betweenness_value'])\n"
-            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'domain_graph.png')))"
+            "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'domain_graph.png'), "
+            "alt='Synthetic Applied AI and Multimedia research knowledge graph'))"
         ),
         nbformat.v4.new_markdown_cell(
             "**Interpretation.** Recommendation Systems is the strongest bridge under "
@@ -267,8 +284,10 @@ def generate_notebooks() -> list[Path]:
                     "'status_published','total_engagement']])"
                 ),
                 nbformat.v4.new_code_cell(
-                    "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'engagement_by_post_type.png')))\n"
-                    "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'engagement_correlation.png')))"
+                    "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'engagement_by_post_type.png'), "
+                    "alt='Mean engagement components by Facebook post type'))\n"
+                    "display(Image(filename=str(ROOT / 'visualizations' / 'static' / 'engagement_correlation.png'), "
+                    "alt='Spearman rank correlation matrix for engagement measures'))"
                 ),
                 nbformat.v4.new_markdown_cell(
                     "Means and medians are reported together because engagement is "
@@ -381,3 +400,110 @@ def execute_notebooks(paths: list[Path] | None = None) -> list[Path]:
     finally:
         os.environ["PATH"] = original_path
     return selected
+
+
+def _exercise_base_cells(title: str) -> list:
+    """Return portable setup cells for a standalone exercise notebook."""
+
+    return [
+        nbformat.v4.new_markdown_cell(
+            f"# {title}\n\n"
+            "This independently readable exercise notebook contains its objective, "
+            "complete Python implementation, calculated output, interpretation, and "
+            "limitation. The clean and executed editions are generated from the same "
+            "canonical cells.\n\n"
+            f"**Student:** {STUDENT['name']} ({STUDENT['id']})  \n"
+            f"**Course:** {STUDENT['course_name']} ({STUDENT['course_code']}), "
+            f"{STUDENT['semester']}"
+        ),
+        nbformat.v4.new_code_cell(
+            "from pathlib import Path\n"
+            "import json\n"
+            "import sys\n"
+            "from IPython.display import HTML, Image, display\n"
+            "ROOT = Path.cwd().resolve()\n"
+            "while ROOT != ROOT.parent and not (ROOT / 'pyproject.toml').exists():\n"
+            "    ROOT = ROOT.parent\n"
+            "if not (ROOT / 'pyproject.toml').exists():\n"
+            "    raise FileNotFoundError('Run this file inside the project checkout.')\n"
+            "if str(ROOT) not in sys.path:\n"
+            "    sys.path.insert(0, str(ROOT))\n"
+            "SUMMARY = json.loads((ROOT / 'outputs' / 'analysis_summary.json').read_text(encoding='utf-8'))\n"
+            "print('Project root resolved successfully.')\n"
+            "print('Canonical summary loaded successfully.')"
+        ),
+    ]
+
+
+def generate_exercise_artifacts() -> list[Path]:
+    """Create source, executed, Python, and HTML files for every exercise."""
+
+    exercise_cells = _exercise_cells()
+    cells_per_exercise = 3
+    expected_cells = len(EXERCISE_ARTIFACT_SPECS) * cells_per_exercise
+    if len(exercise_cells) != expected_cells:
+        raise ValueError(
+            f"Expected {expected_cells} exercise cells, found {len(exercise_cells)}."
+        )
+
+    html_exporter = HTMLExporter(template_name="lab")
+    html_exporter.exclude_input_prompt = True
+    html_exporter.exclude_output_prompt = True
+    python_exporter = PythonExporter()
+    written: list[Path] = []
+
+    for index, (number, slug, title) in enumerate(EXERCISE_ARTIFACT_SPECS):
+        start = index * cells_per_exercise
+        notebook = nbformat.v4.new_notebook()
+        notebook["metadata"]["kernelspec"] = {
+            "display_name": "Python 3",
+            "language": "python",
+            "name": "python3",
+        }
+        notebook["metadata"]["language_info"] = {
+            "name": "python",
+            "version": f"{sys.version_info.major}.{sys.version_info.minor}",
+        }
+        notebook["cells"] = [
+            *_exercise_base_cells(f"Exercise {number}: {title}"),
+            *deepcopy(exercise_cells[start : start + cells_per_exercise]),
+        ]
+        for cell_index, cell in enumerate(notebook["cells"], start=1):
+            cell["id"] = f"exercise-{number:02d}-{slug[:30]}-{cell_index:02d}"
+            if cell["cell_type"] == "code":
+                cell["execution_count"] = None
+                cell["outputs"] = []
+
+        folder = ROOT / "exercises" / f"{number:02d}_{slug}"
+        folder.mkdir(parents=True, exist_ok=True)
+        stem = f"exercise_{number:02d}_{slug}"
+        source_path = folder / f"{stem}.ipynb"
+        executed_path = folder / f"{stem}_executed.ipynb"
+        python_path = folder / f"{stem}.py"
+        html_path = folder / f"{stem}.html"
+
+        nbformat.write(notebook, source_path)
+        python_source, _ = python_exporter.from_notebook_node(notebook)
+        python_path.write_text(python_source, encoding="utf-8")
+
+        executed = deepcopy(notebook)
+        client = NotebookClient(
+            executed,
+            timeout=600,
+            kernel_name="python3",
+            resources={"metadata": {"path": str(ROOT)}},
+            allow_errors=False,
+            record_timing=False,
+        )
+        client.execute(cwd=str(ROOT))
+        nbformat.write(executed, executed_path)
+        html_source, _ = html_exporter.from_notebook_node(executed)
+        html_source = html_source.replace(
+            "<title>Notebook</title>",
+            f"<title>Exercise {number}: {title}</title>",
+            1,
+        )
+        html_path.write_text(html_source, encoding="utf-8")
+        written.extend((source_path, executed_path, python_path, html_path))
+
+    return written

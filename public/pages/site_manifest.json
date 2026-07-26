@@ -11,5 +11,14 @@
     "exercises/06-interactive-color-dashboard.html",
     "exercises/07-applied-ai-knowledge-graph.html"
   ],
+  "exercise_artifact_folders": [
+    "exercise-files/01-weighted-adjacency",
+    "exercise-files/02-six-layout-comparison",
+    "exercise-files/03-student-course-bipartite",
+    "exercise-files/04-weighted-barabasi-albert",
+    "exercise-files/05-generative-model-comparison",
+    "exercise-files/06-interactive-color-dashboard",
+    "exercise-files/07-applied-ai-knowledge-graph"
+  ],
   "canonical_summary": "outputs/analysis_summary.json"
 }

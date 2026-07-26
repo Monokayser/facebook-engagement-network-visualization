@@ -50,7 +50,11 @@ from src.network_analysis import (
     student_course_findings,
     transport_representations,
 )
-from src.notebook_builder import execute_notebooks, generate_notebooks
+from src.notebook_builder import (
+    execute_notebooks,
+    generate_exercise_artifacts,
+    generate_notebooks,
+)
 from src.report_generator import generate_reports
 from src.site_generator import generate_static_site
 from src.visualization import (
@@ -337,8 +341,9 @@ def run_pipeline() -> dict[str, Any]:
     notebooks = generate_notebooks()
     generate_reports()
     _copy_site_assets()
-    generate_static_site(summary)
     execute_notebooks(notebooks)
+    generate_exercise_artifacts()
+    generate_static_site(summary)
     build_artifact_manifest()
     LOGGER.info("Pipeline completed successfully.")
     return summary

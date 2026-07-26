@@ -198,9 +198,11 @@ table{{width:100%;border-collapse:collapse;background:#fff}}th,td{{border:1px so
 .exercise-copy h3{{font-size:1.35rem;margin:4px 0 7px}}.exercise-copy p{{color:var(--muted);margin:0}}.exercise-meta{{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:3px}}.tag{{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#506777;background:#f7f9fa;font-size:.72rem;font-weight:800}}
 .exercise-cta{{white-space:nowrap;color:#bd4e35;font-weight:800}}.exercise-progress{{display:flex;align-items:center;gap:14px;margin:0 0 24px;color:var(--muted);font-weight:700}}.exercise-progress span{{height:6px;flex:1;border-radius:999px;background:linear-gradient(90deg,var(--coral) var(--progress),#dce3e8 var(--progress))}}
 .exercise-nav{{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 0 34px}}.exercise-nav a{{font-weight:800;text-decoration:none}}.exercise-nav .next{{text-align:right}}.exercise-nav .all{{color:var(--muted);font-size:.84rem}}
-.resource-bar{{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 8px}}.section-label{{display:block;color:var(--coral);font:800 .75rem/1.3 Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;margin-top:38px}}.exercise-output{{background:#edf3f6;border-radius:16px;padding:20px 24px;margin:18px 0}}.source-list{{display:flex;gap:10px;flex-wrap:wrap;padding:0;list-style:none}}
-.source-list a{{display:inline-block;background:#e8edf1;color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:800;font-size:.86rem}}footer{{padding:38px 0;background:#11283c;color:#fff}}footer a{{color:#ffab93}}
+.resource-bar{{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 8px}}.section-label{{display:block;color:var(--coral);font:800 .75rem/1.3 Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;margin-top:38px;scroll-margin-top:96px}}.exercise-output{{background:#edf3f6;border-radius:16px;padding:20px 24px;margin:18px 0}}.source-list{{display:flex;gap:10px;flex-wrap:wrap;padding:0;list-style:none}}
+.source-list a{{display:inline-block;background:#e8edf1;color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:800;font-size:.86rem}}
+.artifact-grid{{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}}.artifact-card{{display:flex;flex-direction:column;min-width:0;background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;box-shadow:0 8px 24px rgba(23,50,77,.05)}}.artifact-card h3{{margin:12px 0 4px}}.artifact-card p{{color:var(--muted);margin:0 0 16px}}.artifact-head{{display:flex;align-items:center;justify-content:space-between;gap:12px}}.file-badge{{display:inline-flex;align-items:center;justify-content:center;min-width:70px;border-radius:9px;padding:6px 10px;background:var(--ink);color:#fff;font:800 .76rem/1 Consolas,monospace;letter-spacing:.08em}}.file-size{{color:var(--muted);font-size:.78rem;font-weight:700}}.artifact-link{{margin-top:auto;font-weight:800}}.artifact-note{{color:var(--muted);font-size:.9rem}}footer{{padding:38px 0;background:#11283c;color:#fff}}footer a{{color:#ffab93}}
 @media(max-width:850px){{.grid{{grid-template-columns:1fr}}nav .wrap{{align-items:flex-start;padding:12px 0;flex-direction:column}}nav .links{{gap:10px 16px}}iframe{{height:520px;min-height:520px}}pre{{max-height:520px}}.exercise-card{{grid-template-columns:64px minmax(0,1fr)}}.exercise-number{{width:52px;height:52px}}.exercise-cta{{grid-column:2;white-space:normal}}.exercise-nav{{grid-template-columns:1fr 1fr}}.exercise-nav .all{{grid-column:1/-1;grid-row:1;text-align:center}}}}
+@media(max-width:650px){{.artifact-grid{{grid-template-columns:1fr}}}}
 @media(max-width:520px){{.exercise-card{{grid-template-columns:1fr;gap:12px;padding:20px}}.exercise-number{{width:44px;height:44px}}.exercise-cta{{grid-column:1}}.exercise-nav{{gap:10px;font-size:.82rem}}}}
 </style>"""
 
@@ -289,6 +291,99 @@ def _exercise_filename(exercise: dict[str, Any]) -> str:
     return f"{exercise['number']:02d}-{exercise['slug']}.html"
 
 
+def _human_file_size(path: Path) -> str:
+    size = path.stat().st_size
+    if size >= 1024 * 1024:
+        return f"{size / (1024 * 1024):.1f} MB"
+    return f"{size / 1024:.0f} KB"
+
+
+def _exercise_artifact_paths(exercise: dict[str, Any]) -> dict[str, Path | str]:
+    number = exercise["number"]
+    source_slug = exercise["slug"].replace("-", "_")
+    source_folder = ROOT / "exercises" / f"{number:02d}_{source_slug}"
+    web_folder = f"{number:02d}-{exercise['slug']}"
+    stem = f"exercise_{number:02d}_{source_slug}"
+    return {
+        "source_folder": source_folder,
+        "web_folder": web_folder,
+        "python": source_folder / f"{stem}.py",
+        "source_notebook": source_folder / f"{stem}.ipynb",
+        "executed_notebook": source_folder / f"{stem}_executed.ipynb",
+        "html_notebook": source_folder / f"{stem}.html",
+    }
+
+
+def _artifact_card(
+    label: str,
+    title: str,
+    description: str,
+    path: Path,
+    href: str,
+    *,
+    preview: bool = False,
+) -> str:
+    action = "Open in browser" if preview else "Download file"
+    attributes = ' target="_blank" rel="noopener"' if preview else " download"
+    return f"""
+<article class="artifact-card">
+  <div class="artifact-head"><span class="file-badge">{html.escape(label)}</span>
+  <span class="file-size">{_human_file_size(path)}</span></div>
+  <h3>{html.escape(title)}</h3>
+  <p>{html.escape(description)}</p>
+  <a class="artifact-link" href="{html.escape(href)}"{attributes}>{action} &rarr;</a>
+</article>"""
+
+
+def _exercise_artifact_pack(exercise: dict[str, Any]) -> str:
+    paths = _exercise_artifact_paths(exercise)
+    web_root = f"../exercise-files/{paths['web_folder']}"
+    cards = [
+        _artifact_card(
+            "PY",
+            "Python source",
+            "Standalone, reusable implementation generated from the canonical cells.",
+            paths["python"],
+            f"{web_root}/{paths['python'].name}",
+        ),
+        _artifact_card(
+            "IPYNB",
+            "Clean notebook",
+            "Editable notebook with code cells ready for a fresh-kernel execution.",
+            paths["source_notebook"],
+            f"{web_root}/{paths['source_notebook'].name}",
+        ),
+        _artifact_card(
+            "IPYNB+",
+            "Executed notebook",
+            "The same notebook with verified outputs stored for assessment and review.",
+            paths["executed_notebook"],
+            f"{web_root}/{paths['executed_notebook'].name}",
+        ),
+        _artifact_card(
+            "HTML",
+            "Browser notebook",
+            "Standalone HTML export of the executed notebook; no Jupyter installation required.",
+            paths["html_notebook"],
+            f"{web_root}/{paths['html_notebook'].name}",
+            preview=True,
+        ),
+    ]
+    if exercise["interactive"]:
+        interactive_path = INTERACTIVE / exercise["interactive"]
+        cards.append(
+            _artifact_card(
+                "PLOTLY",
+                "Interactive visualization",
+                "Standalone interactive graph with zoom, pan, hover, and responsive sizing.",
+                interactive_path,
+                f"../interactive/{exercise['interactive']}",
+                preview=True,
+            )
+        )
+    return "".join(cards)
+
+
 def _exercise_card(
     exercise: dict[str, Any],
     result: dict[str, Any],
@@ -361,6 +456,8 @@ def _write_exercise_pages(summary: dict[str, Any], root: Path) -> None:
             f"{html.escape(path)}</a></li>"
             for path in exercise["source_paths"]
         )
+        artifact_paths = _exercise_artifact_paths(exercise)
+        artifact_pack = _exercise_artifact_pack(exercise)
         progress = number / len(EXERCISES) * 100
         navigation = _exercise_navigation(number)
         body = f"""
@@ -380,20 +477,30 @@ analysis. This mandatory network exercise uses the supplied or explicitly synthe
 relationship data because the Facebook table has no verified user-to-user edges.</div>
 <div class="resource-bar">
 <a class="button" href="../downloads/{html.escape(exercise['dataset'].replace('/', '__'))}">Download exercise data</a>
-<a class="button secondary" href="{REPOSITORY_URL}/tree/main/src">Browse source folder</a>
+<a class="button secondary" href="#files">Open file pack</a>
+<a class="button secondary" href="{REPOSITORY_URL}/tree/main/exercises/{artifact_paths['source_folder'].name}">Browse exercise folder</a>
 <a class="button secondary" href="../report/report.pdf">Read report section</a>
 </div>
-<span class="section-label">02 &middot; Evidence</span>
+<span class="section-label" id="files">02 &middot; Files</span>
+<h2>Complete exercise file pack</h2>
+<p>Use the Python file for reusable source, the clean notebook for independent
+execution, the executed notebook for verified outputs, and the HTML edition for
+browser review. Every format contains the same exercise logic and evidence.</p>
+<div class="artifact-grid">{artifact_pack}</div>
+<p class="artifact-note"><strong>Format integrity:</strong> the clean IPYNB has no
+stored outputs; the executed IPYNB and HTML were produced by a clean kernel with
+errors disallowed.</p>
+<span class="section-label">03 &middot; Evidence</span>
 <h2>Verified result and visualization</h2>
 <div class="exercise-output"><strong>{html.escape(exercise['deliverable'])}</strong>
 <p>{_exercise_result(exercise, result)}</p></div>{visual}
-<span class="section-label">03 &middot; Reproducibility</span>
+<span class="section-label">04 &middot; Reproducibility</span>
 <h2>Python implementation</h2>
 <p>The implementation below is taken from the canonical project modules. Open any
 module to inspect the complete surrounding code and imports.</p>
 <ul class="source-list">{source_links}</ul>
 <pre><code>{_code(exercise['functions'])}</code></pre>
-<span class="section-label">04 &middot; Analysis</span>
+<span class="section-label">05 &middot; Analysis</span>
 <h2>Interpretation and limitation</h2>
 <p>{html.escape(result.get('interpretation', result.get('justification', result.get('conclusion', 'The output demonstrates the requested graph representation and visual encoding.'))))}</p>
 <p><strong>Limitation:</strong> {html.escape(_exercise_limitation(number))}</p>
@@ -431,13 +538,39 @@ def generate_static_site(summary: dict[str, Any] | None = None) -> Path:
     if WEBSITE.exists():
         shutil.rmtree(WEBSITE)
     WEBSITE.mkdir(parents=True)
-    for directory in ("images", "interactive", "report", "data", "downloads"):
+    for directory in (
+        "images",
+        "interactive",
+        "report",
+        "data",
+        "downloads",
+        "exercise-files",
+        "visualizations",
+    ):
         (WEBSITE / directory).mkdir()
+    (WEBSITE / "visualizations" / "interactive").mkdir()
 
     for image_path in STATIC.glob("*.png"):
         _copy_file(image_path, WEBSITE / "images" / image_path.name)
     for interactive_path in INTERACTIVE.glob("*.html"):
         _copy_file(interactive_path, WEBSITE / "interactive" / interactive_path.name)
+        _copy_file(
+            interactive_path,
+            WEBSITE / "visualizations" / "interactive" / interactive_path.name,
+        )
+    for exercise in EXERCISES:
+        paths = _exercise_artifact_paths(exercise)
+        destination = WEBSITE / "exercise-files" / paths["web_folder"]
+        for role in (
+            "python",
+            "source_notebook",
+            "executed_notebook",
+            "html_notebook",
+        ):
+            source = paths[role]
+            if not source.exists():
+                raise FileNotFoundError(f"Missing exercise artifact: {source}")
+            _copy_file(source, destination / source.name)
     for suffix in ("md", "docx", "pdf"):
         _copy_file(
             ROOT / "report" / f"report.{suffix}",
@@ -533,6 +666,9 @@ pnpm test</code></pre>
         "pages_url": PAGES_URL,
         "exercise_pages": [
             f"exercises/{item['number']:02d}-{item['slug']}.html" for item in EXERCISES
+        ],
+        "exercise_artifact_folders": [
+            f"exercise-files/{item['number']:02d}-{item['slug']}" for item in EXERCISES
         ],
         "canonical_summary": "outputs/analysis_summary.json",
     }
