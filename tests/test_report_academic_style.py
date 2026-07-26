@@ -6,7 +6,11 @@ import re
 from pathlib import Path
 
 from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 from pypdf import PdfReader
+from reportlab.lib.enums import TA_JUSTIFY
+
+from src.report_generator import _configure_pdf_styles
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / "report"
@@ -68,3 +72,24 @@ def test_report_formats_include_all_seven_exercises() -> None:
     ):
         for exercise in range(1, 8):
             assert f"Exercise {exercise}" in text
+
+
+def test_academic_body_paragraphs_are_justified() -> None:
+    document = Document(REPORT / "report.docx")
+    normal = document.styles["Normal"]
+    assert normal.paragraph_format.alignment == WD_ALIGN_PARAGRAPH.JUSTIFY
+
+    body_paragraphs = [
+        paragraph
+        for paragraph in document.paragraphs
+        if paragraph.style.name == "Normal"
+        and len(paragraph.text.split()) >= 20
+        and paragraph.paragraph_format.left_indent is None
+    ]
+    assert body_paragraphs
+    assert all(
+        paragraph.alignment in (None, WD_ALIGN_PARAGRAPH.JUSTIFY)
+        for paragraph in body_paragraphs
+    )
+
+    assert _configure_pdf_styles()["AcademicBody"].alignment == TA_JUSTIFY

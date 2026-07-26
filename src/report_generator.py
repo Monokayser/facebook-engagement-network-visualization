@@ -17,7 +17,7 @@ from docx.oxml.ns import qn
 from docx.shared import Inches, Pt, RGBColor
 from reportlab import rl_config
 from reportlab.lib import colors
-from reportlab.lib.enums import TA_CENTER
+from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
@@ -1287,6 +1287,7 @@ def _configure_document(document: Document) -> None:
     normal.font.size = Pt(11)
     normal.paragraph_format.space_after = Pt(6)
     normal.paragraph_format.line_spacing = 1.1
+    normal.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     for style_name, size, before, after, color in (
         ("Title", 30, 0, 8, NAVY),
         ("Subtitle", 15, 0, 8, GRAY),
@@ -1298,6 +1299,7 @@ def _configure_document(document: Document) -> None:
         style.font.name = "Calibri"
         style.font.size = Pt(size)
         style.font.color.rgb = color
+        style.paragraph_format.alignment = WD_ALIGN_PARAGRAPH.LEFT
         style.paragraph_format.space_before = Pt(before)
         style.paragraph_format.space_after = Pt(after)
         style.paragraph_format.keep_with_next = True
@@ -1341,6 +1343,7 @@ def _add_table(
     widths: list[float] | None = None,
 ) -> None:
     title_paragraph = document.add_paragraph()
+    title_paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
     title_run = title_paragraph.add_run(title)
     title_run.bold = True
     title_run.font.size = Pt(9.5)
@@ -1355,6 +1358,7 @@ def _add_table(
         cell.text = header
         _set_cell_shading(cell, LIGHT)
         cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
+        cell.paragraphs[0].alignment = WD_ALIGN_PARAGRAPH.LEFT
         for run in cell.paragraphs[0].runs:
             run.bold = True
             run.font.size = Pt(8.5)
@@ -1365,6 +1369,7 @@ def _add_table(
             cell.text = str(value)
             cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             for paragraph in cell.paragraphs:
+                paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
                 paragraph.paragraph_format.space_after = Pt(0)
                 for run in paragraph.runs:
                     run.font.size = Pt(8)
@@ -1451,6 +1456,7 @@ def build_docx(summary: dict[str, Any], path: Path) -> None:
     ]
     for reference in references:
         paragraph = document.add_paragraph(reference)
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.LEFT
         paragraph.paragraph_format.left_indent = Inches(0.25)
         paragraph.paragraph_format.first_line_indent = Inches(-0.25)
     document.add_heading("Appendix: Reproducibility and assumptions", level=1)
@@ -2420,13 +2426,20 @@ def _docx_sections(
     )
 
 
-def build_pdf(summary: dict[str, Any], path: Path) -> None:
-    """Create a compact PDF fallback from the same verified summary."""
+def _configure_pdf_styles():
+    """Return report styles with justified academic body paragraphs."""
 
     styles = getSampleStyleSheet()
     styles["Heading1"].keepWithNext = 1
     styles["Heading2"].keepWithNext = 1
     styles["Heading3"].keepWithNext = 1
+    styles.add(
+        ParagraphStyle(
+            name="AcademicBody",
+            parent=styles["BodyText"],
+            alignment=TA_JUSTIFY,
+        )
+    )
     styles.add(
         ParagraphStyle(
             name="CoverTitle",
@@ -2439,6 +2452,13 @@ def build_pdf(summary: dict[str, Any], path: Path) -> None:
             spaceAfter=18,
         )
     )
+    return styles
+
+
+def build_pdf(summary: dict[str, Any], path: Path) -> None:
+    """Create a compact PDF fallback from the same verified summary."""
+
+    styles = _configure_pdf_styles()
     document = SimpleDocTemplate(
         str(path),
         pagesize=letter,
@@ -2467,10 +2487,30 @@ def build_pdf(summary: dict[str, Any], path: Path) -> None:
     ]
     figure_number = 1
     for title, paragraphs, table_spec, figure_spec in _docx_sections(summary):
-        story.append(Paragraph(title, styles[f"Heading{_heading_level(title)}"]))
-        for paragraph in paragraphs:
-            story.append(Paragraph(paragraph, styles["BodyText"]))
-            story.append(Spacer(1, 0.08 * inch))
+        heading = Paragraph(title, styles[f"Heading{_heading_level(title)}"])
+        remaining_paragraphs = paragraphs
+        if paragraphs:
+            story.append(
+                KeepTogether(
+                    [
+                        heading,
+                        Paragraph(paragraphs[0], styles["AcademicBody"]),
+                        Spacer(1, 0.08 * inch),
+                    ]
+                )
+            )
+            remaining_paragraphs = paragraphs[1:]
+        else:
+            story.append(heading)
+        for paragraph in remaining_paragraphs:
+            story.append(
+                KeepTogether(
+                    [
+                        Paragraph(paragraph, styles["AcademicBody"]),
+                        Spacer(1, 0.08 * inch),
+                    ]
+                )
+            )
         if table_spec:
             rows = [table_spec["headers"], *table_spec["rows"]]
             table = Table(
@@ -2532,7 +2572,7 @@ def build_pdf(summary: dict[str, Any], path: Path) -> None:
             "source-identical. The official UCI archive was used because Kaggle "
             "credentials were unavailable. All assignment relationship graphs are "
             "explicitly synthetic.",
-            styles["BodyText"],
+            styles["AcademicBody"],
         )
     )
 
