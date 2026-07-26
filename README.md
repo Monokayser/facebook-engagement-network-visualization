@@ -178,8 +178,8 @@ one-by-one learning sequence.
 GitHub Actions rebuilds the project with Python 3.12, validates the notebooks,
 tests, reports, and site assets, and deploys `website/` through GitHub Pages.
 Relative URLs make the static site safe under the repository subpath. The
-configured Sites project is maintained as a secondary deployment of the same
-canonical content.
+repository homepage and every public visualization link point to the GitHub
+Pages deployment.
 
 ## Testing
 

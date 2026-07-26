@@ -148,3 +148,18 @@ def test_no_stale_domain_metric_claim_remains() -> None:
     ]
     for path in tracked_text:
         assert "0.3663" not in path.read_text(encoding="utf-8")
+
+
+def test_publication_targets_github_pages_only() -> None:
+    assert not (ROOT / ".openai" / "hosting.json").exists()
+    public_text = [
+        ROOT / "README.md",
+        ROOT / "report" / "report.md",
+        ROOT / "src" / "report_generator.py",
+        ROOT / "src" / "site_generator.py",
+        ROOT / "website" / "index.html",
+    ]
+    forbidden = ("chatgpt.site", "circleofexpose", "secondary deployment")
+    for path in public_text:
+        text = path.read_text(encoding="utf-8").lower()
+        assert not any(value in text for value in forbidden), path

@@ -790,8 +790,8 @@ def _extended_academic_sections(
                     "cleaning, graph parameters, or metric definitions should trigger the "
                     "complete pipeline, notebook execution, report generation, website "
                     "build, and cross-surface tests. A published release should be tied "
-                    "to a commit SHA so that the local project, repository, Pages artifact, "
-                    "and secondary deployment can be compared unambiguously."
+                    "to a commit SHA so that the local project, repository, and GitHub "
+                    "Pages artifact can be compared unambiguously."
                 ),
                 (
                     "For teaching and assessment, each exercise should remain inspectable "
