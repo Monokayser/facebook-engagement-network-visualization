@@ -154,7 +154,9 @@ Keep `kaggle.json` outside the repository and follow Kaggle's official API crede
 6. **Interactive node-color dashboard** — [standalone HTML](visualizations/interactive/network_color_toggle_dashboard.html)
 7. **Applied AI and Multimedia graph** — [interactive HTML](visualizations/interactive/domain_graph.html), [metrics](outputs/tables/domain_graph_metrics.csv)
 
-Detailed implementation notes and limitations are in [exercises/README.md](exercises/README.md).
+Use the [step-by-step exercise website](https://monokayser.github.io/facebook-engagement-network-visualization/exercises/)
+to work through all seven studies in order. Detailed implementation notes and
+limitations are in [exercises/README.md](exercises/README.md).
 
 ## Reports and dashboard
 
@@ -167,7 +169,9 @@ The interactive dashboard embeds self-contained Plotly files, works without loca
 
 Every exercise has a dedicated generated web page containing its source
 definition, relevant data download, Python implementation, visual output,
-verified result, interpretation, limitation, and report link.
+verified result, interpretation, limitation, report link, and direct links to
+the canonical source modules. Previous/next controls preserve the intended
+one-by-one learning sequence.
 
 ## Public deployment
 

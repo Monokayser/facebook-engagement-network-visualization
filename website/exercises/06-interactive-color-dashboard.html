@@ -16,8 +16,16 @@ main section{padding:54px 0;scroll-margin-top:84px}.grid{display:grid;grid-templ
 .button.secondary{background:#e8edf1;color:var(--ink)!important}figure{margin:28px 0}img{display:block;max-width:100%;height:auto;border-radius:14px}figcaption{color:var(--muted);font-size:.92rem;margin-top:8px}
 main figure img{margin-inline:auto;max-height:620px;object-fit:contain}.feature-figure{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(14px,2.5vw,28px)}.feature-figure img{max-height:460px}iframe{width:100%;height:min(68vw,680px);min-height:560px;border:1px solid var(--line);border-radius:14px;background:#fff}pre{max-height:680px;overflow:auto;background:#10263a;color:#eaf2f6;border-radius:14px;padding:20px;font:13px/1.55 Consolas,monospace}
 table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid var(--line);padding:9px;text-align:left}th{background:#e9eef3}
-.notice{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}footer{padding:38px 0;background:#11283c;color:#fff}footer a{color:#ffab93}
-@media(max-width:850px){.grid{grid-template-columns:1fr}nav .wrap{align-items:flex-start;padding:12px 0;flex-direction:column}nav .links{gap:10px 16px}iframe{height:520px;min-height:520px}pre{max-height:520px}}
+.notice{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}.exercise-roadmap{display:grid;gap:16px;counter-reset:exercise}
+.exercise-card{display:grid;grid-template-columns:82px minmax(0,1fr) auto;align-items:center;gap:24px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;color:var(--ink);text-decoration:none;box-shadow:0 8px 30px rgba(23,50,77,.05);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.exercise-card:hover{transform:translateY(-2px);border-color:#b5c6d2;box-shadow:0 14px 36px rgba(23,50,77,.1)}.exercise-number{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--ink);color:#fff;font:800 1rem/1 Consolas,monospace}
+.exercise-copy h3{font-size:1.35rem;margin:4px 0 7px}.exercise-copy p{color:var(--muted);margin:0}.exercise-meta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:3px}.tag{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#506777;background:#f7f9fa;font-size:.72rem;font-weight:800}
+.exercise-cta{white-space:nowrap;color:#bd4e35;font-weight:800}.exercise-progress{display:flex;align-items:center;gap:14px;margin:0 0 24px;color:var(--muted);font-weight:700}.exercise-progress span{height:6px;flex:1;border-radius:999px;background:linear-gradient(90deg,var(--coral) var(--progress),#dce3e8 var(--progress))}
+.exercise-nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 0 34px}.exercise-nav a{font-weight:800;text-decoration:none}.exercise-nav .next{text-align:right}.exercise-nav .all{color:var(--muted);font-size:.84rem}
+.resource-bar{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 8px}.section-label{display:block;color:var(--coral);font:800 .75rem/1.3 Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;margin-top:38px}.exercise-output{background:#edf3f6;border-radius:16px;padding:20px 24px;margin:18px 0}.source-list{display:flex;gap:10px;flex-wrap:wrap;padding:0;list-style:none}
+.source-list a{display:inline-block;background:#e8edf1;color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:800;font-size:.86rem}footer{padding:38px 0;background:#11283c;color:#fff}footer a{color:#ffab93}
+@media(max-width:850px){.grid{grid-template-columns:1fr}nav .wrap{align-items:flex-start;padding:12px 0;flex-direction:column}nav .links{gap:10px 16px}iframe{height:520px;min-height:520px}pre{max-height:520px}.exercise-card{grid-template-columns:64px minmax(0,1fr)}.exercise-number{width:52px;height:52px}.exercise-cta{grid-column:2;white-space:normal}.exercise-nav{grid-template-columns:1fr 1fr}.exercise-nav .all{grid-column:1/-1;grid-row:1;text-align:center}}
+@media(max-width:520px){.exercise-card{grid-template-columns:1fr;gap:12px;padding:20px}.exercise-number{width:44px;height:44px}.exercise-cta{grid-column:1}.exercise-nav{gap:10px;font-size:.82rem}}
 </style></head>
 <body>
 <nav><div class="wrap"><a href="../index.html">CSE628 Visual Analytics</a>
@@ -28,15 +36,38 @@ table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid
 <a href="https://github.com/Monokayser/facebook-engagement-network-visualization">GitHub</a></div></div></nav>
 <header><div class="wrap"><p class="eyebrow">Exercise 06 · Complete study</p>
 <h1>Interactive node-color dashboard</h1><p>Supplied Section 9 directed social-network pattern</p></div></header>
-<main><section><div class="wrap"><h2>Objective and data source</h2>
+<main><section><div class="wrap">
+<div class="exercise-progress">Exercise 6 of 7
+<span style="--progress:85.71%"></span></div>
+
+<div class="exercise-nav">
+  <span><a href="05-generative-model-comparison.html">&larr; Exercise 05</a></span>
+  <a class="all" href="index.html">All seven exercises</a>
+  <span><a class="next" href="07-applied-ai-knowledge-graph.html">Exercise 07 &rarr;</a></span>
+</div>
+<span class="section-label">01 &middot; Objective</span>
+<h2>Objective and data source</h2>
 <p>The exercise reuses the required teaching definition and saves every calculated
 artifact through the deterministic Python pipeline. Relevant data:
 <a href="../downloads/outputs__analysis_summary.json"><code>outputs/analysis_summary.json</code></a>.</p>
 <div class="notice"><strong>Scope:</strong> The Facebook dataset is used for the empirical
 analysis. This mandatory network exercise uses the supplied or explicitly synthetic
 relationship data because the Facebook table has no verified user-to-user edges.</div>
-<h2>Verified result</h2><p>20 nodes and 52 directed edges are shown. Positions remain unchanged between both color modes.</p><iframe title="Interactive node-color dashboard" src="../interactive/network_color_toggle_dashboard.html" loading="lazy"></iframe>
-<h2>Python implementation</h2><pre><code>def build_social_graph() -&gt; nx.DiGraph:
+<div class="resource-bar">
+<a class="button" href="../downloads/outputs__analysis_summary.json">Download exercise data</a>
+<a class="button secondary" href="https://github.com/Monokayser/facebook-engagement-network-visualization/tree/main/src">Browse source folder</a>
+<a class="button secondary" href="../report/report.pdf">Read report section</a>
+</div>
+<span class="section-label">02 &middot; Evidence</span>
+<h2>Verified result and visualization</h2>
+<div class="exercise-output"><strong>Plotly network with two fixed-position color modes</strong>
+<p>20 nodes and 52 directed edges are shown. Positions remain unchanged between both color modes.</p></div><iframe title="Interactive node-color dashboard" src="../interactive/network_color_toggle_dashboard.html" loading="lazy"></iframe>
+<span class="section-label">03 &middot; Reproducibility</span>
+<h2>Python implementation</h2>
+<p>The implementation below is taken from the canonical project modules. Open any
+module to inspect the complete surrounding code and imports.</p>
+<ul class="source-list"><li><a href="https://github.com/Monokayser/facebook-engagement-network-visualization/blob/main/src/graph_generators.py">src/graph_generators.py</a></li><li><a href="https://github.com/Monokayser/facebook-engagement-network-visualization/blob/main/src/visualization.py">src/visualization.py</a></li></ul>
+<pre><code>def build_social_graph() -&gt; nx.DiGraph:
     &quot;&quot;&quot;Recreate the seeded directed social graph used by Section 9.&quot;&quot;&quot;
 
     rng = random.Random(SEED)
@@ -189,11 +220,16 @@ def create_social_toggle_dashboard(graph: nx.DiGraph) -&gt; Path:
     )
     return _write_interactive(fig, &quot;network_color_toggle_dashboard.html&quot;)
 </code></pre>
-<p><a class="button" href="https://github.com/Monokayser/facebook-engagement-network-visualization/tree/main/src">Browse complete Python source</a>
-<a class="button secondary" href="../report/report.pdf">Read report section</a></p>
+<span class="section-label">04 &middot; Analysis</span>
 <h2>Interpretation and limitation</h2>
 <p>The output demonstrates the requested graph representation and visual encoding.</p>
 <p><strong>Limitation:</strong> The social graph is synthetic and Plotly line segments do not display arrowheads.</p>
+
+<div class="exercise-nav">
+  <span><a href="05-generative-model-comparison.html">&larr; Exercise 05</a></span>
+  <a class="all" href="index.html">All seven exercises</a>
+  <span><a class="next" href="07-applied-ai-knowledge-graph.html">Exercise 07 &rarr;</a></span>
+</div>
 </div></section></main>
 <footer><div class="wrap"><strong>Visual Analytics and Network Analysis</strong>
 <p>S. M. Monowar Kayser · 253-25-019 ·

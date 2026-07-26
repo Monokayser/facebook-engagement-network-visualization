@@ -34,6 +34,12 @@ EXERCISES = [
         "title": "Weighted adjacency representations",
         "source": "Supplied Section 8.2 G_transport graph",
         "dataset": "outputs/tables/g_transport_adjacency_matrix.csv",
+        "kind": "Graph representation",
+        "deliverable": "Adjacency list and 7 x 7 weighted matrix",
+        "source_paths": [
+            "src/graph_generators.py",
+            "src/network_analysis.py",
+        ],
         "functions": [
             graph_generators.build_transport_graph,
             network_analysis.transport_representations,
@@ -47,6 +53,12 @@ EXERCISES = [
         "title": "Six-layout comparison",
         "source": "Supplied Section 8.3 G_ppi graph",
         "dataset": "outputs/analysis_summary.json",
+        "kind": "Layout comparison",
+        "deliverable": "Six layouts and a combined comparison figure",
+        "source_paths": [
+            "src/graph_generators.py",
+            "src/visualization.py",
+        ],
         "functions": [
             graph_generators.build_ppi_graph,
             visualization.create_layout_figures,
@@ -60,6 +72,13 @@ EXERCISES = [
         "title": "Student-course bipartite network",
         "source": "Stored synthetic student, course, and enrollment CSV files",
         "dataset": "data/generated/enrollments.csv",
+        "kind": "Bipartite network",
+        "deliverable": "CSV-backed enrollment graph and degree findings",
+        "source_paths": [
+            "src/graph_generators.py",
+            "src/network_analysis.py",
+            "src/visualization.py",
+        ],
         "functions": [
             graph_generators.load_student_course_graph,
             network_analysis.student_course_findings,
@@ -73,6 +92,12 @@ EXERCISES = [
         "title": "Weighted Barabasi-Albert graph",
         "source": "Supplied Section 6 Barabasi-Albert graph definition",
         "dataset": "outputs/tables/barabasi_albert_edge_weights.csv",
+        "kind": "Weighted network",
+        "deliverable": "Weighted graph, baseline graph, and edge table",
+        "source_paths": [
+            "src/graph_generators.py",
+            "src/visualization.py",
+        ],
         "functions": [
             graph_generators.add_reproducible_edge_weights,
             visualization.create_weighted_ba_figures,
@@ -86,6 +111,13 @@ EXERCISES = [
         "title": "Generative-model comparison",
         "source": "Supplied Section 3 graph-model definitions",
         "dataset": "outputs/tables/generative_models_comparison.csv",
+        "kind": "Model comparison",
+        "deliverable": "Metric table and degree-distribution figures",
+        "source_paths": [
+            "src/graph_generators.py",
+            "src/network_analysis.py",
+            "src/visualization.py",
+        ],
         "functions": [
             graph_generators.build_generative_models,
             network_analysis.compare_generative_models,
@@ -99,6 +131,12 @@ EXERCISES = [
         "title": "Interactive node-color dashboard",
         "source": "Supplied Section 9 directed social-network pattern",
         "dataset": "outputs/analysis_summary.json",
+        "kind": "Interactive dashboard",
+        "deliverable": "Plotly network with two fixed-position color modes",
+        "source_paths": [
+            "src/graph_generators.py",
+            "src/visualization.py",
+        ],
         "functions": [
             graph_generators.build_social_graph,
             visualization.create_social_toggle_dashboard,
@@ -112,6 +150,13 @@ EXERCISES = [
         "title": "Applied AI and Multimedia knowledge graph",
         "source": "Stored synthetic typed-node and semantic-edge CSV files",
         "dataset": "data/generated/domain_graph_nodes.csv",
+        "kind": "Knowledge graph",
+        "deliverable": "Typed graph, centrality findings, and interactive view",
+        "source_paths": [
+            "src/graph_generators.py",
+            "src/network_analysis.py",
+            "src/visualization.py",
+        ],
         "functions": [
             graph_generators.load_domain_graph,
             network_analysis.domain_metrics,
@@ -147,8 +192,16 @@ main section{{padding:54px 0;scroll-margin-top:84px}}.grid{{display:grid;grid-te
 .button.secondary{{background:#e8edf1;color:var(--ink)!important}}figure{{margin:28px 0}}img{{display:block;max-width:100%;height:auto;border-radius:14px}}figcaption{{color:var(--muted);font-size:.92rem;margin-top:8px}}
 main figure img{{margin-inline:auto;max-height:620px;object-fit:contain}}.feature-figure{{background:#fff;border:1px solid var(--line);border-radius:18px;padding:clamp(14px,2.5vw,28px)}}.feature-figure img{{max-height:460px}}iframe{{width:100%;height:min(68vw,680px);min-height:560px;border:1px solid var(--line);border-radius:14px;background:#fff}}pre{{max-height:680px;overflow:auto;background:#10263a;color:#eaf2f6;border-radius:14px;padding:20px;font:13px/1.55 Consolas,monospace}}
 table{{width:100%;border-collapse:collapse;background:#fff}}th,td{{border:1px solid var(--line);padding:9px;text-align:left}}th{{background:#e9eef3}}
-.notice{{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}}footer{{padding:38px 0;background:#11283c;color:#fff}}footer a{{color:#ffab93}}
-@media(max-width:850px){{.grid{{grid-template-columns:1fr}}nav .wrap{{align-items:flex-start;padding:12px 0;flex-direction:column}}nav .links{{gap:10px 16px}}iframe{{height:520px;min-height:520px}}pre{{max-height:520px}}}}
+.notice{{border-left:5px solid var(--coral);padding:16px 20px;background:#fff}}.exercise-roadmap{{display:grid;gap:16px;counter-reset:exercise}}
+.exercise-card{{display:grid;grid-template-columns:82px minmax(0,1fr) auto;align-items:center;gap:24px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px;color:var(--ink);text-decoration:none;box-shadow:0 8px 30px rgba(23,50,77,.05);transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}}
+.exercise-card:hover{{transform:translateY(-2px);border-color:#b5c6d2;box-shadow:0 14px 36px rgba(23,50,77,.1)}}.exercise-number{{display:grid;place-items:center;width:64px;height:64px;border-radius:50%;background:var(--ink);color:#fff;font:800 1rem/1 Consolas,monospace}}
+.exercise-copy h3{{font-size:1.35rem;margin:4px 0 7px}}.exercise-copy p{{color:var(--muted);margin:0}}.exercise-meta{{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:3px}}.tag{{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;padding:4px 9px;color:#506777;background:#f7f9fa;font-size:.72rem;font-weight:800}}
+.exercise-cta{{white-space:nowrap;color:#bd4e35;font-weight:800}}.exercise-progress{{display:flex;align-items:center;gap:14px;margin:0 0 24px;color:var(--muted);font-weight:700}}.exercise-progress span{{height:6px;flex:1;border-radius:999px;background:linear-gradient(90deg,var(--coral) var(--progress),#dce3e8 var(--progress))}}
+.exercise-nav{{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;padding:18px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:0 0 34px}}.exercise-nav a{{font-weight:800;text-decoration:none}}.exercise-nav .next{{text-align:right}}.exercise-nav .all{{color:var(--muted);font-size:.84rem}}
+.resource-bar{{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 8px}}.section-label{{display:block;color:var(--coral);font:800 .75rem/1.3 Consolas,monospace;letter-spacing:.12em;text-transform:uppercase;margin-top:38px}}.exercise-output{{background:#edf3f6;border-radius:16px;padding:20px 24px;margin:18px 0}}.source-list{{display:flex;gap:10px;flex-wrap:wrap;padding:0;list-style:none}}
+.source-list a{{display:inline-block;background:#e8edf1;color:var(--ink);text-decoration:none;padding:8px 12px;border-radius:10px;font-weight:800;font-size:.86rem}}footer{{padding:38px 0;background:#11283c;color:#fff}}footer a{{color:#ffab93}}
+@media(max-width:850px){{.grid{{grid-template-columns:1fr}}nav .wrap{{align-items:flex-start;padding:12px 0;flex-direction:column}}nav .links{{gap:10px 16px}}iframe{{height:520px;min-height:520px}}pre{{max-height:520px}}.exercise-card{{grid-template-columns:64px minmax(0,1fr)}}.exercise-number{{width:52px;height:52px}}.exercise-cta{{grid-column:2;white-space:normal}}.exercise-nav{{grid-template-columns:1fr 1fr}}.exercise-nav .all{{grid-column:1/-1;grid-row:1;text-align:center}}}}
+@media(max-width:520px){{.exercise-card{{grid-template-columns:1fr;gap:12px;padding:20px}}.exercise-number{{width:44px;height:44px}}.exercise-cta{{grid-column:1}}.exercise-nav{{gap:10px;font-size:.82rem}}}}
 </style>"""
 
 
@@ -232,6 +285,56 @@ def _exercise_limitation(number: int) -> str:
     }[number]
 
 
+def _exercise_filename(exercise: dict[str, Any]) -> str:
+    return f"{exercise['number']:02d}-{exercise['slug']}.html"
+
+
+def _exercise_card(
+    exercise: dict[str, Any],
+    result: dict[str, Any],
+    href_prefix: str = "",
+) -> str:
+    filename = _exercise_filename(exercise)
+    number = exercise["number"]
+    return f"""
+<a class="exercise-card" href="{href_prefix}{filename}"
+   aria-label="Open Exercise {number}: {html.escape(exercise['title'])}">
+  <span class="exercise-number">{number:02d}</span>
+  <div class="exercise-copy">
+    <span class="exercise-meta">
+      <span class="tag">{html.escape(exercise['kind'])}</span>
+      <span class="tag">{html.escape(exercise['deliverable'])}</span>
+    </span>
+    <h3>{html.escape(exercise['title'])}</h3>
+    <p>{_exercise_result(exercise, result)}</p>
+  </div>
+  <span class="exercise-cta">Open complete exercise &rarr;</span>
+</a>"""
+
+
+def _exercise_navigation(number: int) -> str:
+    previous_link = ""
+    next_link = ""
+    if number > 1:
+        previous = EXERCISES[number - 2]
+        previous_link = (
+            f'<a href="{_exercise_filename(previous)}">&larr; Exercise '
+            f"{previous['number']:02d}</a>"
+        )
+    if number < len(EXERCISES):
+        following = EXERCISES[number]
+        next_link = (
+            f'<a class="next" href="{_exercise_filename(following)}">Exercise '
+            f"{following['number']:02d} &rarr;</a>"
+        )
+    return f"""
+<div class="exercise-nav">
+  <span>{previous_link}</span>
+  <a class="all" href="index.html">All seven exercises</a>
+  <span>{next_link}</span>
+</div>"""
+
+
 def _write_exercise_pages(summary: dict[str, Any], root: Path) -> None:
     target = root / "exercises"
     target.mkdir(parents=True, exist_ok=True)
@@ -239,17 +342,12 @@ def _write_exercise_pages(summary: dict[str, Any], root: Path) -> None:
     for exercise in EXERCISES:
         number = exercise["number"]
         result = summary["exercises"][f"exercise_{number}"]
-        filename = f"{number:02d}-{exercise['slug']}.html"
-        cards.append(
-            f'<article class="card"><span class="eyebrow">Exercise {number:02d}</span>'
-            f"<h3>{html.escape(exercise['title'])}</h3>"
-            f"<p>{_exercise_result(exercise, result)}</p>"
-            f'<a href="{filename}">Open complete exercise →</a></article>'
-        )
+        filename = _exercise_filename(exercise)
+        cards.append(_exercise_card(exercise, result))
         visual = ""
         if exercise["image"]:
             visual = (
-                f'<figure><img src="../images/{exercise["image"]}" '
+                f'<figure class="feature-figure"><img src="../images/{exercise["image"]}" '
                 f'alt="{html.escape(exercise["title"])} visualization">'
                 f"<figcaption>Calculated visual output for Exercise {number}.</figcaption></figure>"
             )
@@ -258,23 +356,48 @@ def _write_exercise_pages(summary: dict[str, Any], root: Path) -> None:
                 f'<iframe title="{html.escape(exercise["title"])}" '
                 f'src="../interactive/{exercise["interactive"]}" loading="lazy"></iframe>'
             )
+        source_links = "".join(
+            f'<li><a href="{REPOSITORY_URL}/blob/main/{path}">'
+            f"{html.escape(path)}</a></li>"
+            for path in exercise["source_paths"]
+        )
+        progress = number / len(EXERCISES) * 100
+        navigation = _exercise_navigation(number)
         body = f"""
 <header><div class="wrap"><p class="eyebrow">Exercise {number:02d} · Complete study</p>
 <h1>{html.escape(exercise['title'])}</h1><p>{html.escape(exercise['source'])}</p></div></header>
-<main><section><div class="wrap"><h2>Objective and data source</h2>
+<main><section><div class="wrap">
+<div class="exercise-progress">Exercise {number} of {len(EXERCISES)}
+<span style="--progress:{progress:.2f}%"></span></div>
+{navigation}
+<span class="section-label">01 &middot; Objective</span>
+<h2>Objective and data source</h2>
 <p>The exercise reuses the required teaching definition and saves every calculated
 artifact through the deterministic Python pipeline. Relevant data:
 <a href="../downloads/{html.escape(exercise['dataset'].replace('/', '__'))}"><code>{html.escape(exercise['dataset'])}</code></a>.</p>
 <div class="notice"><strong>Scope:</strong> The Facebook dataset is used for the empirical
 analysis. This mandatory network exercise uses the supplied or explicitly synthetic
 relationship data because the Facebook table has no verified user-to-user edges.</div>
-<h2>Verified result</h2><p>{_exercise_result(exercise, result)}</p>{visual}
-<h2>Python implementation</h2><pre><code>{_code(exercise['functions'])}</code></pre>
-<p><a class="button" href="{REPOSITORY_URL}/tree/main/src">Browse complete Python source</a>
-<a class="button secondary" href="../report/report.pdf">Read report section</a></p>
+<div class="resource-bar">
+<a class="button" href="../downloads/{html.escape(exercise['dataset'].replace('/', '__'))}">Download exercise data</a>
+<a class="button secondary" href="{REPOSITORY_URL}/tree/main/src">Browse source folder</a>
+<a class="button secondary" href="../report/report.pdf">Read report section</a>
+</div>
+<span class="section-label">02 &middot; Evidence</span>
+<h2>Verified result and visualization</h2>
+<div class="exercise-output"><strong>{html.escape(exercise['deliverable'])}</strong>
+<p>{_exercise_result(exercise, result)}</p></div>{visual}
+<span class="section-label">03 &middot; Reproducibility</span>
+<h2>Python implementation</h2>
+<p>The implementation below is taken from the canonical project modules. Open any
+module to inspect the complete surrounding code and imports.</p>
+<ul class="source-list">{source_links}</ul>
+<pre><code>{_code(exercise['functions'])}</code></pre>
+<span class="section-label">04 &middot; Analysis</span>
 <h2>Interpretation and limitation</h2>
 <p>{html.escape(result.get('interpretation', result.get('justification', result.get('conclusion', 'The output demonstrates the requested graph representation and visual encoding.'))))}</p>
 <p><strong>Limitation:</strong> {html.escape(_exercise_limitation(number))}</p>
+{navigation}
 </div></section></main>"""
         (target / filename).write_text(
             _page(exercise["title"], body, "../"), encoding="utf-8"
@@ -282,9 +405,15 @@ relationship data because the Facebook table has no verified user-to-user edges.
     index_body = f"""
 <header><div class="wrap"><p class="eyebrow">Seven mandatory exercises</p>
 <h1>Complete network visualization studies.</h1>
-<p>Each page provides the required source definition, code, output, interpretation,
-limitation, and downloadable evidence.</p></div></header>
-<main><section><div class="wrap"><div class="grid">{''.join(cards)}</div></div></section></main>"""
+<p>Work through the exercises in order. Every step contains its source definition,
+data, executable code, visual output, verified finding, interpretation, limitation,
+and links to the complete repository.</p></div></header>
+<main><section><div class="wrap">
+<div class="notice"><strong>Recommended path:</strong> Start with representation,
+then compare layouts, construct typed networks, add weights, compare models, and
+finish with interactive and knowledge-graph views.</div>
+<div class="exercise-roadmap" style="margin-top:24px">{''.join(cards)}</div>
+</div></section></main>"""
     (target / "index.html").write_text(
         _page("Exercises", index_body, "../"), encoding="utf-8"
     )
@@ -334,10 +463,11 @@ def generate_static_site(summary: dict[str, Any] | None = None) -> Path:
 
     engagement = data["engagement"]
     exercise_cards = "".join(
-        f'<article class="card"><span class="eyebrow">Exercise {item["number"]:02d}</span>'
-        f'<h3>{html.escape(item["title"])}</h3>'
-        f"<p>{_exercise_result(item, data['exercises'][f'exercise_{item['number']}'])}</p>"
-        f'<a href="exercises/{item["number"]:02d}-{item["slug"]}.html">Code, output and analysis →</a></article>'
+        _exercise_card(
+            item,
+            data["exercises"][f"exercise_{item['number']}"],
+            "exercises/",
+        )
         for item in EXERCISES
     )
     body = f"""
@@ -356,7 +486,10 @@ paired with seven complete graph-visualization exercises.</p>
 <figcaption>Mean engagement components by post type. Descriptive differences do not establish causality.</figcaption></figure>
 <iframe title="Interactive Facebook engagement explorer" src="interactive/engagement_explorer.html" loading="lazy"></iframe>
 </div></section>
-<section id="exercises"><div class="wrap"><h2>Seven complete exercises</h2><div class="grid">{exercise_cards}</div></div></section>
+<section id="exercises"><div class="wrap"><h2>Seven complete exercises</h2>
+<p>Follow the sequence from graph representation to interactive knowledge graphs.
+Each step opens a dedicated page with data, code, visual evidence, and analysis.</p>
+<div class="exercise-roadmap">{exercise_cards}</div></div></section>
 <section><div class="wrap"><h2>Research knowledge graph</h2>
 <p>Recommendation Systems is the strongest synthetic bridge by inverse-strength weighted betweenness
 ({data['exercises']['exercise_7']['top_betweenness_value']:.4f}).</p>

@@ -18,12 +18,16 @@ const exercises = [
   {
     number: "01",
     title: "Weighted adjacency",
+    type: "Graph representation",
+    deliverable: "Matrix + adjacency list",
     result: "The 7 × 7 kilometer matrix is symmetric.",
     href: "/pages/exercises/01-weighted-adjacency.html",
   },
   {
     number: "02",
     title: "Six graph layouts",
+    type: "Layout comparison",
+    deliverable: "Six layouts + comparison",
     result:
       "Kamada–Kawai best exposes ring locality and shortcuts; the supplied realization has zero triangle clustering.",
     href: "/pages/exercises/02-six-layout-comparison.html",
@@ -31,30 +35,40 @@ const exercises = [
   {
     number: "03",
     title: "Bipartite enrollment",
+    type: "Bipartite network",
+    deliverable: "CSV-backed graph",
     result: "Data Visualization reaches all 12 synthetic students.",
     href: "/pages/exercises/03-student-course-bipartite.html",
   },
   {
     number: "04",
     title: "Weighted BA graph",
+    type: "Weighted network",
+    deliverable: "Figures + edge table",
     result: "196 edges encode seeded weights from 1 to 10.",
     href: "/pages/exercises/04-weighted-barabasi-albert.html",
   },
   {
     number: "05",
     title: "Generative models",
+    type: "Model comparison",
+    deliverable: "Metrics + distributions",
     result: "Small-world clustering and scale-free hubs remain distinct strengths.",
     href: "/pages/exercises/05-generative-model-comparison.html",
   },
   {
     number: "06",
     title: "Interactive color toggle",
+    type: "Interactive dashboard",
+    deliverable: "Two Plotly color modes",
     result: "Switch between interest group and in-degree without moving nodes.",
     href: "/pages/exercises/06-interactive-color-dashboard.html",
   },
   {
     number: "07",
     title: "Research knowledge graph",
+    type: "Knowledge graph",
+    deliverable: "Static + interactive graph",
     result: "Recommendation Systems is the strongest synthetic bridge.",
     href: "/pages/exercises/07-applied-ai-knowledge-graph.html",
   },
@@ -262,14 +276,23 @@ export default function Home() {
         </div>
         <div className="exercise-list">
           {exercises.map((exercise) => (
-            <article key={exercise.number}>
-              <span>{exercise.number}</span>
-              <h3>{exercise.title}</h3>
+            <a
+              className="exercise-row"
+              href={exercise.href}
+              key={exercise.number}
+              aria-label={`Open Exercise ${exercise.number}: ${exercise.title}`}
+            >
+              <span className="exercise-number">{exercise.number}</span>
+              <div className="exercise-title">
+                <div className="exercise-tags">
+                  <small>{exercise.type}</small>
+                  <small>{exercise.deliverable}</small>
+                </div>
+                <h3>{exercise.title}</h3>
+              </div>
               <p>{exercise.result}</p>
-              <a className="exercise-link" href={exercise.href}>
-                Code, output and analysis →
-              </a>
-            </article>
+              <strong className="exercise-link">Open exercise →</strong>
+            </a>
           ))}
         </div>
       </section>

@@ -557,37 +557,85 @@ h1 em {
   border-top: 1px solid var(--line);
 }
 
-.exercise-list article {
+.exercise-row {
   align-items: center;
   border-bottom: 1px solid var(--line);
+  color: inherit;
   display: grid;
   gap: 24px;
-  grid-template-columns: 70px minmax(200px, 0.7fr) minmax(300px, 1.3fr);
-  min-height: 112px;
-  transition: background 150ms ease, padding 150ms ease;
+  grid-template-columns:
+    70px minmax(220px, 0.8fr) minmax(280px, 1.2fr) auto;
+  min-height: 132px;
+  text-decoration: none;
+  transition:
+    background 150ms ease,
+    padding 150ms ease,
+    transform 150ms ease;
 }
 
-.exercise-list article:hover {
-  background: rgb(255 255 255 / 45%);
+.exercise-row:hover {
+  background: rgb(255 255 255 / 58%);
   padding: 0 16px;
+  transform: translateX(2px);
 }
 
-.exercise-list span {
-  color: var(--coral);
+.exercise-row:focus-visible {
+  border-radius: 12px;
+  outline: 3px solid var(--blue);
+  outline-offset: 4px;
+}
+
+.exercise-number {
+  align-items: center;
+  background: var(--ink);
+  border-radius: 50%;
+  color: white;
+  display: flex;
   font-family: var(--font-geist-mono), monospace;
   font-size: 12px;
+  height: 52px;
+  justify-content: center;
+  width: 52px;
 }
 
-.exercise-list h3 {
+.exercise-title {
+  min-width: 0;
+}
+
+.exercise-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.exercise-tags small {
+  background: #eaf0f3;
+  border-radius: 999px;
+  color: #526879;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 5px 8px;
+  text-transform: uppercase;
+}
+
+.exercise-row h3 {
   font-size: 20px;
   margin: 0;
 }
 
-.exercise-list p {
+.exercise-row p {
   color: var(--muted);
   font-size: 14px;
   line-height: 1.6;
   margin: 0;
+}
+
+.exercise-link {
+  color: var(--coral);
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 .split-feature {
@@ -788,13 +836,19 @@ footer p {
     grid-template-columns: 1fr;
   }
 
-  .exercise-list article {
+  .exercise-row {
     gap: 10px;
     grid-template-columns: 44px 1fr;
     padding: 22px 0;
   }
 
-  .exercise-list p {
+  .exercise-number {
+    height: 38px;
+    width: 38px;
+  }
+
+  .exercise-row p,
+  .exercise-row .exercise-link {
     grid-column: 2;
   }
 
@@ -844,7 +898,7 @@ footer p {
   }
 
   .button,
-  .exercise-list article {
+  .exercise-row {
     transition: none;
   }
 }

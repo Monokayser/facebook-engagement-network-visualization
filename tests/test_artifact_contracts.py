@@ -68,13 +68,38 @@ def test_every_exercise_page_contains_required_evidence() -> None:
     for path in pages:
         text = path.read_text(encoding="utf-8")
         for required in (
+            "Exercise ",
+            "All seven exercises",
             "Objective and data source",
-            "Verified result",
+            "Verified result and visualization",
             "Python implementation",
             "Interpretation and limitation",
+            "Download exercise data",
+            "blob/main/src/",
             "<pre><code>",
         ):
             assert required in text, (path.name, required)
+
+
+def test_exercise_index_is_an_ordered_seven_step_pathway() -> None:
+    text = (ROOT / "website" / "exercises" / "index.html").read_text(encoding="utf-8")
+    assert 'class="exercise-roadmap"' in text
+    assert text.count('class="exercise-card"') == 7
+    positions = [
+        text.index(f'class="exercise-number">{number:02d}') for number in range(1, 8)
+    ]
+    assert positions == sorted(positions)
+
+
+def test_exercise_pages_have_sequential_navigation() -> None:
+    pages = sorted((ROOT / "website" / "exercises").glob("[0-9][0-9]-*.html"))
+    first = pages[0].read_text(encoding="utf-8")
+    last = pages[-1].read_text(encoding="utf-8")
+    assert "Exercise 02 &rarr;" in first
+    assert "&larr; Exercise 06" in last
+    for number, page in enumerate(pages, start=1):
+        text = page.read_text(encoding="utf-8")
+        assert f"Exercise {number} of 7" in text
 
 
 def test_static_site_uses_relative_internal_paths() -> None:
