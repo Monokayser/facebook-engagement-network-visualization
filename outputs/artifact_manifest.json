@@ -248,8 +248,8 @@
       "sha256": "085391283077908896247d4cc0fb16eaded89138e14ad30ff0f0ba3337af8660"
     },
     "visualizations/interactive/network_color_toggle_dashboard.html": {
-      "bytes": 21241,
-      "sha256": "9f05972172ae5c1bb2c7c62acd16286b40eed3f9c4abd6a99d4915bac42c0c9a"
+      "bytes": 21227,
+      "sha256": "0c733b8d71af06bc39ece09a5ca29efaf064aaf341fd5ef85119a5812f7ce8ce"
     },
     "visualizations/static/barabasi_albert_unweighted.png": {
       "bytes": 555436,

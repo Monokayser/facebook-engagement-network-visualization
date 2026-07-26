@@ -551,7 +551,6 @@ def create_social_toggle_dashboard(graph: nx.DiGraph) -> Path:
         margin={"l": 20, "r": 20, "t": 90, "b": 20},
         xaxis={"visible": False},
         yaxis={"visible": False},
-        height=700,
         legend={"orientation": "h", "y": -0.05},
         updatemenus=[
             {
