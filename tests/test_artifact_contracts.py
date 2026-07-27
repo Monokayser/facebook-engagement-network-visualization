@@ -10,6 +10,8 @@ from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
 import nbformat
+from docx import Document
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -195,6 +197,21 @@ def test_report_copies_are_byte_identical() -> None:
         ]
         hashes = {sha256(path.read_bytes()).hexdigest() for path in copies}
         assert len(hashes) == 1, name
+
+
+def test_academic_report_body_paragraphs_are_explicitly_justified() -> None:
+    document = Document(ROOT / "report" / "report.docx")
+    body_paragraphs = []
+    for paragraph in document.paragraphs:
+        if paragraph.text.strip() == "References":
+            break
+        if paragraph.style.name == "Normal" and len(paragraph.text.split()) >= 12:
+            body_paragraphs.append(paragraph)
+    assert len(body_paragraphs) >= 75
+    assert all(
+        paragraph.alignment == WD_ALIGN_PARAGRAPH.JUSTIFY
+        for paragraph in body_paragraphs
+    )
 
 
 def test_no_stale_domain_metric_claim_remains() -> None:

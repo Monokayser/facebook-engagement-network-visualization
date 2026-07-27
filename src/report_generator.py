@@ -426,11 +426,16 @@ def _extended_academic_sections(
                     "Paths are resolved from the repository root, stochastic operations "
                     "use seed 42, graph parameters are recorded, notebooks are executed "
                     "from clean kernels, and required artifacts are checked for existence "
-                    "and nontrivial size. The artifact manifest records hashes for the "
-                    "canonical data, tables, figures, interactive files, notebooks, and "
-                    "reports. These measures cannot guarantee that every software version "
-                    "will render pixels identically, but they make the analytical decisions "
-                    "and the delivered version observable and comparable."
+                    "and nontrivial size. Each mandatory exercise is published as a "
+                    "Black-formatted Python source file, a clean notebook, a clean-kernel "
+                    "executed notebook, and a standalone browser notebook; interactive "
+                    "exercises also retain their Plotly HTML. The website exposes these "
+                    "files beside the exercise evidence, while the GitHub repository keeps "
+                    "their canonical organized copies. The artifact manifest records hashes "
+                    "for the canonical data, tables, figures, interactive files, notebooks, "
+                    "Python sources, and reports. These measures cannot guarantee that every "
+                    "software version will render pixels identically, but they make the "
+                    "analytical decisions and the delivered version observable and comparable."
                 ),
                 (
                     "The design also separates regeneration from verification. A pipeline "
@@ -1148,7 +1153,7 @@ Plotly Technologies Inc. (2026). *Plotly Python documentation*. https://plotly.c
 
 ## Appendix A. Reproducibility and output map
 
-Run `python main.py` to rebuild processed data, analytical tables, figures, interactive HTML, notebooks, summary JSON, and reports. Run `pytest` for automated validation. The raw CSV remains in `data/raw/`, the cleaned table in `data/processed/`, required exercise tables in `outputs/tables/`, figures in `visualizations/`, and interactive artifacts in both `visualizations/interactive/` and the deployed website.
+Run `python main.py` to rebuild processed data, analytical tables, figures, interactive HTML, notebooks, summary JSON, and reports. Run `pytest` for automated validation. Each numbered exercise folder contains a standalone Python source, a clean notebook, a clean-kernel executed notebook, and a browser-ready HTML notebook; Exercises 6 and 7 also expose their interactive Plotly files. The raw CSV remains in `data/raw/`, the cleaned table in `data/processed/`, required exercise tables in `outputs/tables/`, figures in `visualizations/`, and interactive artifacts in both `visualizations/interactive/` and the deployed website.
 
 ## Appendix B. Assumptions
 
@@ -1431,6 +1436,7 @@ def build_docx(summary: dict[str, Any], path: Path) -> None:
         document.add_heading(title, level=_heading_level(title))
         for paragraph_text in paragraphs:
             paragraph = document.add_paragraph(paragraph_text)
+            paragraph.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
             paragraph.paragraph_format.widow_control = True
         if table_spec:
             _add_table(document, **table_spec)
@@ -1460,12 +1466,15 @@ def build_docx(summary: dict[str, Any], path: Path) -> None:
         paragraph.paragraph_format.left_indent = Inches(0.25)
         paragraph.paragraph_format.first_line_indent = Inches(-0.25)
     document.add_heading("Appendix: Reproducibility and assumptions", level=1)
-    document.add_paragraph(
+    appendix_paragraph = document.add_paragraph(
         "Run python main.py to rebuild every generated artifact and pytest to validate "
-        "the pipeline. The supplied teaching notebooks are source-identical. The "
-        "official UCI download was used because Kaggle credentials were unavailable. "
-        "All assignment-only relationship graphs are labeled synthetic."
+        "the pipeline. Each exercise folder contains its standalone Python source, clean "
+        "notebook, executed notebook, and browser-ready HTML notebook. The supplied teaching "
+        "notebooks are source-identical. The official UCI download was used because Kaggle "
+        "credentials were unavailable. All assignment-only relationship graphs are labeled "
+        "synthetic."
     )
+    appendix_paragraph.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
     document.core_properties.title = (
         "Visual Analytics and Network Analysis of Facebook Engagement Using Python"
     )
@@ -2490,15 +2499,9 @@ def build_pdf(summary: dict[str, Any], path: Path) -> None:
         heading = Paragraph(title, styles[f"Heading{_heading_level(title)}"])
         remaining_paragraphs = paragraphs
         if paragraphs:
-            story.append(
-                KeepTogether(
-                    [
-                        heading,
-                        Paragraph(paragraphs[0], styles["AcademicBody"]),
-                        Spacer(1, 0.08 * inch),
-                    ]
-                )
-            )
+            story.append(heading)
+            story.append(Paragraph(paragraphs[0], styles["AcademicBody"]))
+            story.append(Spacer(1, 0.08 * inch))
             remaining_paragraphs = paragraphs[1:]
         else:
             story.append(heading)
@@ -2568,10 +2571,12 @@ def build_pdf(summary: dict[str, Any], path: Path) -> None:
     story.append(
         Paragraph(
             "The generated artifacts can be rebuilt by running python main.py, and the "
-            "pipeline can be validated with pytest. The supplied teaching notebooks are "
-            "source-identical. The official UCI archive was used because Kaggle "
-            "credentials were unavailable. All assignment relationship graphs are "
-            "explicitly synthetic.",
+            "pipeline can be validated with pytest. Every numbered exercise folder contains "
+            "a standalone Python source, a clean notebook, a clean-kernel executed notebook, "
+            "and a browser-ready HTML notebook; the interactive exercises also retain their "
+            "Plotly HTML. The supplied teaching notebooks are source-identical. The official "
+            "UCI archive was used because Kaggle credentials were unavailable. All assignment "
+            "relationship graphs are explicitly synthetic.",
             styles["AcademicBody"],
         )
     )
